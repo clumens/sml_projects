@@ -1,7 +1,8 @@
 About
 =====
 HTTP is a structure for working with the HTTP/1.0 protocol for Standard ML
-of New Jersey (SML/NJ).
+of New Jersey (SML/NJ).  Its current functionality is limited to fetching
+URIs from a web server.
 
 
 Licensing
@@ -13,6 +14,26 @@ of the license.
 
 Usage
 =====
+See the included INSTALL file for how to install this library.  After
+you've installed it, the structure is very easy to use.  See the signature
+for the (currently) very simple API.  The most interesting function is
+HTTP.get, which fetches URIs from a web server and writes out a file on
+the filesystem.  The file written will be the name of the file provided in
+the URI, or index.html if no filename is given.
+
+   val get:  URI.URI -> HTTP.dl
+
+The HTTP.dl type is a {filename: string, time: Time.time} record,
+containing the full path of the output file and the amount of time it took
+to download the URI.  If the web server returns an error condition, the
+StatusCode exception is raised.
+
+The rest of the API is currently pretty boring.
+
+An example program for using HTTP is provided in the websuck subdirectory.
+Websuck can be built into an almost standalone program by running make
+from its subdirectory.  If you're not on x86 Linux, you will need to
+modify the HEAP variable in the Makefile accordingly.
 
 
 Bugs

@@ -15,8 +15,12 @@ to be on the safe side, I have tested with version 110.48.
 Installation
 ============
 I'm not aware of any really good way to install add-on SML structures.
-You can add the HTTP directory to your project and then add a line like the
-following to the bottom of your project's .cm file:
+You can add the HTTP directory to your project by adding the following
+line to the top section of your .cm file:
+
+   library (path/to/http/http.cm)
+
+And the following to the sources section:
 
    path/to/http/http.cm
 

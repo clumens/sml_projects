@@ -1,5 +1,4 @@
 - use option types internally where it makes sense
-- write an example program that makes use of the structure
 - support continuation of downloads
 - save headers to a file
 - progress bar via a lambda passed to get?

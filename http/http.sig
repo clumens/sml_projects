@@ -1,4 +1,4 @@
-(* $Id: http.sig,v 1.5 2004/08/11 16:22:06 chris Exp $ *)
+(* $Id: http.sig,v 1.6 2004/08/13 02:48:59 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -30,8 +30,13 @@
  *)
 signature HTTP =
 sig
+   (* Thrown when the web server responds with an error code. *)
    exception StatusCode of int * string
 
+   (* The return type for fetching URIs - filename is the complete path of
+    * where the file was written to, and time is the amount of time it
+    * took to complete the download.
+    *)
    type dl = {filename: string, time: Time.time}
 
    val get: URI.URI -> dl
