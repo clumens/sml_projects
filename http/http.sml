@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.6 2004/08/11 15:26:40 chris Exp $ *)
+(* $Id: http.sml,v 1.7 2004/08/11 15:33:03 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -197,7 +197,7 @@ struct
       end
 
       val conn = connect host (Option.getOpt (port, 80))
-      val req  = "GET " ^ (Option.getOpt (path, "/")) ^ " HTTP/1.1\r\n" ^
+      val req  = "GET " ^ (Option.getOpt (path, "/")) ^ " HTTP/1.0\r\n" ^
                  "Host: " ^ host ^ "\r\n" ^
                  "User-Agent: SML/NJ Getter\r\n" ^
                  "Connection: close\r\n\r\n"
