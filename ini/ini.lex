@@ -1,4 +1,4 @@
-(* $Id: ini.lex,v 1.4 2004/08/07 15:24:02 chris Exp $ *)
+(* $Id: ini.lex,v 1.5 2004/08/07 15:39:54 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -32,8 +32,8 @@ structure Tokens = Tokens
 
 type pos = int
 type svalue = Tokens.svalue
-type ('a,'b) token = ('a,'b) Tokens.token
-type lexresult= (svalue,pos) token
+type ('a, 'b) token = ('a, 'b) Tokens.token
+type lexresult= (svalue, pos) token
 
 val lineno = ref 1
 
@@ -43,7 +43,7 @@ fun eof () = Tokens.EOF(!lineno, !lineno)
 
 %header (functor IniLexFun(structure Tokens: IniParser_TOKENS));
 
-%s VAL;
+%s COMMENT VAL;
 
 alpha    = [a-zA-Z];
 idchars  = [a-zA-Z0-9_];
@@ -55,15 +55,18 @@ ws       = [\ \t];
 
 <INITIAL> {alpha}{idchars}* => (Tokens.NAME(yytext, !lineno, !lineno));
 
+<INITIAL> ^";"    => (YYBEGIN COMMENT; lex());
 <INITIAL> "["     => (Tokens.LBRACK(!lineno, !lineno));
 <INITIAL> "]"     => (Tokens.RBRACK(!lineno, !lineno));
 <INITIAL> "="     => (YYBEGIN VAL ; Tokens.EQUAL(!lineno, !lineno));
-<INITIAL> "\n"    => (lineno := !lineno + 1; lex());
 
-<VAL> "\n"        => (lineno := !lineno + 1; YYBEGIN INITIAL;
+<INITIAL,COMMENT> "\n"  => (lineno := !lineno + 1; lex());
+<COMMENT> .+            => (lex());
+
+<VAL> "\n"     => (lineno := !lineno + 1; YYBEGIN INITIAL;
                       Tokens.NL(!lineno, !lineno));
-<VAL> .+          => (Tokens.NAME(yytext, !lineno, !lineno));
+<VAL> .+       => (Tokens.NAME(yytext, !lineno, !lineno));
 
-.                 => (print ("bad char at line " ^ Int.toString (!lineno) ^
-                             ": " ^ yytext ^ "\n");
-                      lex());
+<INITIAL> .    => (print ("bad char at line " ^ Int.toString (!lineno) ^
+                          ": " ^ yytext ^ "\n");
+                   lex());
