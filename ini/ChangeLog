@@ -1,0 +1,7 @@
+Ini-0.2
+=======
+- Ini: throw Ini.InvalidFile instead of ParseError.
+
+Ini-0.1
+=======
+- Initial version.
