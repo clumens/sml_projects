@@ -1,4 +1,4 @@
-(* $Id: ini.lex,v 1.7 2004/08/11 23:11:31 chris Exp $ *)
+(* $Id: ini.lex,v 1.8 2004/08/19 17:29:57 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -33,7 +33,7 @@ structure Tokens = Tokens
 type pos = int
 type svalue = Tokens.svalue
 type ('a, 'b) token = ('a, 'b) Tokens.token
-type lexresult= (svalue, pos) token
+type lexresult = (svalue, pos) token
 
 val lineno = IniError.lineno
 
@@ -64,7 +64,7 @@ ws       = [\ \t];
 <COMMENT> .+            => (lex());
 
 <VAL> "\n"     => (lineno := !lineno + 1; YYBEGIN INITIAL;
-                      Tokens.NL(!lineno, !lineno));
+                   Tokens.NL(!lineno, !lineno));
 <VAL> .+       => (Tokens.NAME(yytext, !lineno, !lineno));
 
 <INITIAL> .    => (print ("bad char at line " ^ Int.toString (!lineno) ^
