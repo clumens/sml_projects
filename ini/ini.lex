@@ -1,12 +1,17 @@
-datatype lexresult = LBRACK | RBRACK | EQUAL | NAME of string | EOF
+structure Tokens = Tokens
+
+type pos = int
+type svalue = Tokens.svalue
+type ('a,'b) token = ('a,'b) Tokens.token
+type lexresult= (svalue,pos) token
 
 val lineno = ref 1
 
-fun eof () = EOF
+fun eof () = Tokens.EOF(!lineno, !lineno)
 
 %%
 
-%structure IniLex
+%header (functor IniLexFun(structure Tokens: IniParser_TOKENS));
 
 %s VAL;
 
@@ -18,15 +23,15 @@ ws       = [\ \t];
 
 {ws}+ => (lex());
 
-<INITIAL> {alpha}{idchars}* => (NAME(yytext));
+<INITIAL> {alpha}{idchars}* => (Tokens.NAME(yytext, !lineno, !lineno));
 
-<INITIAL> "["     => (LBRACK);
-<INITIAL> "]"     => (RBRACK);
-<INITIAL> "="     => (YYBEGIN VAL ; EQUAL);
+<INITIAL> "["     => (Tokens.LBRACK(!lineno, !lineno));
+<INITIAL> "]"     => (Tokens.RBRACK(!lineno, !lineno));
+<INITIAL> "="     => (YYBEGIN VAL ; Tokens.EQUAL(!lineno, !lineno));
 <INITIAL> "\n"    => (lineno := !lineno + 1; lex());
 
 <VAL> "\n"        => (YYBEGIN INITIAL ; lex());
-<VAL> .+          => (NAME(yytext));
+<VAL> .+          => (Tokens.NAME(yytext, !lineno, !lineno));
 
 .                 => (print ("bad char at line " ^ Int.toString (!lineno) ^
                              ": " ^ yytext ^ "\n");
