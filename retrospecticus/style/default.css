@@ -1,0 +1,79 @@
+/* Default Retrospecticus style sheet.
+ *
+ * $Id: default.css,v 1.1 2004/01/04 17:53:20 chris Exp $
+ */
+body {
+   background-color: silver;
+   color:            black;
+   font:             10px veranda, sans-serif;
+}
+
+a {
+   text-decoration:  underline;
+   background-color: transparent;
+   color:            black;
+}
+
+a:visited {
+   color:            gray;
+}
+
+table {
+   margin:           auto;
+}
+
+td {
+   margin:           auto;
+   padding:          10px;
+}
+
+div {
+   border:           black;
+   border-style:     solid;
+   padding:          5px 0px 5px 5px;
+   color:            black;
+   background-color: white;
+}
+
+div p,h1,h2,h3,h4,h5,h6 {
+   margin:           auto;
+   margin-bottom:    10px;
+   padding:          auto;
+   text-align:       left;
+}
+
+.linkbox {
+   border-width:     0px 2px 2px 2px;
+   width:            30%;
+   margin:           0% 35% 0% 35%;
+   text-align:       center;
+}
+
+.titlebox {
+   margin:           20px 0% 0% 25%;
+   width:            50%;
+   font:             bold 25px veranda, sans-serif;
+   text-align:       center;
+}
+
+.navbox {
+   border-width:     2px 2px 0px 2px;
+   width:            50%;
+   margin:           30px 2% 0% 2%;
+   font:             bold 13px veranda, sans-serif;
+}
+
+.collectionbox {
+   border-width:     2px;
+   width:            95%;
+   margin:           0% 2% 0% 2%;
+   text-align:       center;
+}
+
+.footerbox {
+   border-width:     0px 2px 2px 2px;
+   padding:          5px 5px 5px 0px;
+   width:            30%;
+   margin:           0% 2% 0% 67%;
+   text-align:       right;
+}

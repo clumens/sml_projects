@@ -1,0 +1,50 @@
+(* Build the photo browser.
+ *
+ * $Id: sources.cm,v 1.1 2004/01/04 17:53:20 chris Exp $
+ *)
+library
+   signature COLLECTION
+   signature DIR
+   signature NAV
+   signature PERMISSION
+   signature QUERY
+   signature USER
+
+   structure Browser
+   structure Collection
+   structure Config
+   structure Dir
+   structure Msg
+   structure Nav
+   structure Permission
+   structure Query
+   structure User
+
+   (* These are the library components we make use of. *)
+   library(../../mod_ml/sml/mod_ml.cm)
+   library(../../mysql/mysql.cm)
+   library(../../cl_struct/cl.cm)
+is
+   collection.sig
+   dir.sig
+   nav.sig
+   permission.sig
+   query.sig
+   user.sig
+
+   browser.sml
+   collection.sml
+   config.sml
+   dir.sml
+   msg.sml
+   nav.sml
+   permission.sml
+   query.sml
+   user.sml
+
+   (* These are the library components we make use of. *)
+   ../../mod_ml/sml/mod_ml.cm
+   ../../mysql/mysql.cm
+   ../../cl_struct/cl.cm
+
+   $/basis.cm

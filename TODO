@@ -1,0 +1,33 @@
+MySQL project
+=============
+- factor back out into database specific and independent parts
+- check that API consistently handles return values/exceptions
+
+
+mod_ml project
+==============
+- check that API consistently handles return values/exceptions
+- make sure we're doing the right thing everywhere an exception could be
+  thrown or where an API call could return something bad.
+
+
+photo browser project
+=====================
+- move everything site-specific out so it's easy for other people to
+  install and get running on their own systems
+- make sure we're doing the right thing everywhere an exception could be
+  thrown or where an API call could return something bad.
+- what happens when several people are using it at once?
+- when you login, preserve the navbar state
+- check input on new collection form to make sure nothing bad is going on
+
+
+new project ideas
+=================
+- create a good HTML generation library  (adapt HTML to xhtml-1.0 ?)
+
+
+general
+=======
+- comments on top of everything stating what it is, where it comes from, ...
+- make sure packaging and installation is easy and documented

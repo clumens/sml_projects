@@ -1,0 +1,26 @@
+Requirements:
+   Retrospecticus requires the cl_struct, mod_ml, and sml_sql projects to
+   be installed and accessible.  They may be obtained from the same location
+   you download Retrospecticus.
+
+
+Source directory layout:
+   icons/ - Artwork created for the Retrospecticus project.  These icons
+            appear in the browser box and represent users and collections.
+            You may choose between beach and space themes, by changing the
+            icon_dir variable in src/config.sml.
+
+            The icon sets were generously provided by Leah Riley.
+
+   site/  - mod_ml pages which implement all the directly user-accessible
+            portions of the photo browser.  Each file represents one web page.
+            These files will be installed into a site-wite directory
+            accessible by Apache, or into a user's public_html directory.
+
+   sql/   - Scripts to be run in order to set up the databases.
+
+   src/   - Retrospecticus backend.  Think of this as a library that the
+            frontend uses to get the real work done.  These files interface
+            with the filesystem and database.
+
+   style/ - Stylesheets for the website, providing a consistent look.

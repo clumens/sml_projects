@@ -1,0 +1,60 @@
+objects
+=======
+user
+   - required for commenting, but not for browsing
+   - users may be allowed to create collections and upload pictures
+collection
+   - may hold other collections or pictures
+   - required data:  name
+   - optional data:  picture, date, location
+   - each collection may have a CSS-based theme associated with it, or the
+     default just in case
+photo
+   - photo thumbnails displayed on one large page
+   - click on thumbnail to bring up one picture with navigation and
+     any attached comments
+comment
+   - attached to pictures or parent comments
+   - users must login before posting comments
+
+===============================================================================
+
+photo browser v.1
+=================
+photo:
+   user handling - modify profile
+   create collections
+   upload pictures
+   view - pictures
+   comment
+sql:
+   abstracted db server/generic client database layer
+
+
+photo browser v.2
+=================
+photo:
+   move - collections, pictures
+   modify collections
+   exif support
+   collection themes
+   searching
+   administration mode
+html:
+   construct valid xhtml from ML
+   page templating system
+cgi:
+   session support (?)
+mod_ml:
+   caching of pages
+
+===============================================================================
+
+pages
+=====
+modify profile
+move collections/pictures
+upload pictures
+modify collection  (change name, location, date, picture)
+view picture - just need to add comments and junk
+copyright/terms of use
