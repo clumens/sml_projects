@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.7 2004/07/27 14:44:34 chris Exp $ *)
+(* $Id: uri.sml,v 1.8 2004/07/29 21:39:51 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -112,7 +112,8 @@ struct
              | _ => NONE
       in
          case (find' 2) of
-            "ftp"    => parse_ftp ()
+            ""       => NONE
+          | "ftp"    => parse_ftp ()
           | "http"   => parse_http ()
           | s        => SOME(unknown{scheme=s, auth=(find' 4), path=(find 5),
                                      query=(find 7), frag=(find 9)})
