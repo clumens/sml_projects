@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.9 2004/07/31 17:58:41 chris Exp $ *)
+(* $Id: uri.sml,v 1.10 2004/08/08 21:29:21 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -125,11 +125,21 @@ struct
                                      query=(find 7), frag=(find 9)})
       end
 
+      (* Remove whitespace from the head and back of the string. *)
+      fun dropWS str =
+      let
+         open Substring
+      in
+         string (((dropr Char.isSpace) o (dropl Char.isSpace)) (full str))
+      end
+
       (* Regular expression from RFC 2396, appendix B. *)
       val re = DFA.compileString "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?"
+
+      val str' = dropWS str
    in
-      case StringCvt.scanString (DFA.find re) str of
-         SOME tree => match str tree
+      case StringCvt.scanString (DFA.find re) str' of
+         SOME tree => match str' tree
        | NONE      => NONE
    end
 

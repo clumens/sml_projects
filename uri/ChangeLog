@@ -1,3 +1,8 @@
+URI-1.1
+=======
+- parse: Trim whitespace from head and tail of string before looking for a
+         valid URI.
+
 URI-1.0
 =======
 - Initial version.
