@@ -1,0 +1,17 @@
+library
+   library(FFI/libmysql.h.cm)
+
+   signature CONV
+   signature MYSQL
+   structure Conv
+   structure MySQL
+is
+   conv.sig
+   mysql.sig
+   conv.sml
+   mysql.sml
+
+   FFI/libmysql.h.cm: make ()
+
+   $/basis.cm
+   $c/c.cm
