@@ -1,4 +1,4 @@
-(* $Id: ini.grm,v 1.1 2004/08/07 05:42:22 chris Exp $ *)
+(* $Id: ini.grm,v 1.2 2004/08/07 15:24:02 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -30,7 +30,7 @@
  *)
 %%
 
-%term EOF
+%term EOF | NL
     | EQUAL | LBRACK | RBRACK
     | NAME of string
 
@@ -58,10 +58,12 @@ section_list: section_list section ()
             | section              ()
 
 section: header setting_list ()
+       | header              ()
 
 header: LBRACK NAME RBRACK ()
 
 setting_list: setting_list setting  ()
             | setting               ()
 
-setting: NAME EQUAL NAME ()
+setting: NAME EQUAL NAME NL ()
+       | NAME EQUAL NL      ()

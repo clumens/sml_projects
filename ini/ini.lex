@@ -1,4 +1,4 @@
-(* $Id: ini.lex,v 1.3 2004/08/07 05:41:47 chris Exp $ *)
+(* $Id: ini.lex,v 1.4 2004/08/07 15:24:02 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -60,7 +60,8 @@ ws       = [\ \t];
 <INITIAL> "="     => (YYBEGIN VAL ; Tokens.EQUAL(!lineno, !lineno));
 <INITIAL> "\n"    => (lineno := !lineno + 1; lex());
 
-<VAL> "\n"        => (lineno := !lineno + 1; YYBEGIN INITIAL ; lex());
+<VAL> "\n"        => (lineno := !lineno + 1; YYBEGIN INITIAL;
+                      Tokens.NL(!lineno, !lineno));
 <VAL> .+          => (Tokens.NAME(yytext, !lineno, !lineno));
 
 .                 => (print ("bad char at line " ^ Int.toString (!lineno) ^
