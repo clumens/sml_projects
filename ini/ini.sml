@@ -1,4 +1,4 @@
-(* $Id: ini.sml,v 1.2 2004/08/07 05:41:47 chris Exp $ *)
+(* $Id: ini.sml,v 1.3 2004/08/08 00:32:10 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -28,7 +28,9 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
-structure Ini =
+structure Ini :> sig
+   val parse: string -> IniDict.section_dict
+end =
 struct
    structure IniParserLrVals =
      IniParserLrValsFun(structure Token = LrParser.Token)
@@ -39,8 +41,10 @@ struct
                               structure ParserData = IniParserLrVals.ParserData
                               structure Lex = IniLex)
 
+   (* Read in an ini file and return a dictionary of settings. *)
    fun parse filename =
    let
+      (* Run the lexer on the input file, using the provided read function. *)
       fun lex get =
          LrParser.Stream.streamify (IniLex.makeLexer get)
 
@@ -50,9 +54,12 @@ struct
 
       val file = TextIO.openIn filename
 
+      (* Read function to use with lexer. *)
       fun get _ = TextIO.input file
+
+      (* Run the parser on the input file, returning the dictionary. *)
+      val dict = #1 (IniParser.parse (0, lex get, print_error, ()))
    in
-      IniParser.parse (0, lex get, print_error, ()) ;
-      TextIO.closeIn file
+      TextIO.closeIn file ; dict
    end
 end
