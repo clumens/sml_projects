@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.8 2004/07/29 21:39:51 chris Exp $ *)
+(* $Id: uri.sml,v 1.9 2004/07/31 17:58:41 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -32,7 +32,8 @@ structure URI :> URI =
 struct
    exception SchemeUnsupported
 
-   datatype URI = ftp of {user: string option, password: string option,
+   datatype URI = file of {host: string option, path: string}
+                | ftp of {user: string option, password: string option,
                           host: string, port: int option, path: string option}
                 | http of {user: string option, password: string option,
                            host: string, port: int option, path: string option,
@@ -71,6 +72,10 @@ struct
                h::[]    => (h, NONE)
              | h::p::[] => (h, Int.fromString p)
              | _        => ("", NONE)
+
+         fun parse_file () =
+            Option.map (fn path => file{host=(find 4), path=path})
+                       (find 5)
 
          fun parse_ftp () =
             case (String.tokens (fn ch => ch = #"@") (find' 4)) of
@@ -113,6 +118,7 @@ struct
       in
          case (find' 2) of
             ""       => NONE
+          | "file"   => parse_file ()
           | "ftp"    => parse_ftp ()
           | "http"   => parse_http ()
           | s        => SOME(unknown{scheme=s, auth=(find' 4), path=(find 5),
@@ -150,7 +156,14 @@ struct
           | (SOME u, NONE)   => u ^ "@"
           | _                => ""
 
-      fun do_it (ftp{user, password, host, port, path}) =
+      fun do_it (file{host, path}) =
+         "file://" ^ mapEmpty I host ^
+         ( if String.size path > 0 then
+              if String.substring (path, 0, 1) = "/" then path else "/" ^ path
+           else
+              "/" )
+
+        | do_it (ftp{user, password, host, port, path}) =
          "ftp://" ^ cred_string (user, password) ^ host ^
          mapEmpty P port ^ mapEmpty I path
 
