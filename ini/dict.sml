@@ -1,4 +1,4 @@
-(* $Id: dict.sml,v 1.2 2004/08/08 00:40:27 chris Exp $ *)
+(* $Id: dict.sml,v 1.3 2004/08/08 02:25:27 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -49,6 +49,20 @@ struct
       case (HashTable.find dict key) of
          SOME old_value => HashTable.insert dict (key, [value] @ old_value)
        | NONE           => HashTable.insert dict (key, [value])
+
+   (* Look for the item given by key under the given section.  Returns
+    * NONE if the item doesn't exist.
+    *)
+   fun find dict section key =
+      case HashTable.find dict section of
+         SOME s => HashTable.find s key
+       | NONE   => NONE
+
+   (* Look for the item given by key under the given section.  Raises the
+    * table's exception if the item doesn't exist.
+    *)
+   fun lookup dict section key =
+      HashTable.lookup dict (HashTable.lookup dict section)
 
    (* Create a blank dictionary. *)
    fun mkDict () =
