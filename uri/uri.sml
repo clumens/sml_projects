@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.4 2004/07/26 19:02:43 chris Exp $ *)
+(* $Id: uri.sml,v 1.5 2004/07/27 02:44:23 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -30,10 +30,11 @@
  *)
 structure URI :> URI =
 struct
-   datatype URI = http of {user: string, password: string, host: string,
-                           port: int, path: string, query: string, frag: string}
-                | unknown of {scheme: string, auth: string, path: string,
-                              query: string, frag: string}
+   datatype URI = http of {user: string option, password: string option,
+                           host: string, port: int option, path: string option,
+                           query: string option, frag: string option}
+                | unknown of {scheme: string, auth: string, path: string option,
+                              query: string option, frag: string option}
 
    structure DFA = RegExpFn(structure P=AwkSyntax
                             structure E=BackTrackEngine)
@@ -44,45 +45,52 @@ struct
       let
          fun find n =
             case MatchTree.nth (tree, n) of
-               SOME {pos, len} => String.substring (str, pos, len)
-             | NONE            => ""
+               SOME {pos, len} => let
+                                     val sub = String.substring (str, pos, len)
+                                  in
+                                     if sub = "" then NONE else SOME (sub)
+                                  end
+             | NONE => NONE
+
+         fun find' n =
+            Option.getOpt (find n, "")
 
          fun auth str =
             case (String.tokens (fn ch => ch = #":") str) of
-               n::[]    => (n, "")
-             | n::p::[] => (n, p)
-             | _        => ("", "")
+               n::[]    => (SOME n, NONE)
+             | n::p::[] => (SOME n, SOME p)
+             | _        => (NONE, NONE)
 
          fun remote str =
             case (String.tokens (fn ch => ch = #":") str) of
-               h::[]    => (h, 80)
-             | h::p::[] => (h, Option.getOpt (Int.fromString p, 80))
-             | _        => ("", 80)
+               h::[]    => (h, NONE)
+             | h::p::[] => (h, Int.fromString p)
+             | _        => ("", NONE)
 
          fun parse_http () =
-            case (String.tokens (fn ch => ch = #"@") (find 4)) of
+            case (String.tokens (fn ch => ch = #"@") (find' 4)) of
                r::[] =>
                   let
                      val (host, port) = remote r
                   in
-                     http{user="", password="", host=host, port=port,
-                          path=(find 5), query=(find 7), frag=(find 9)}
+                     SOME(http{user=NONE, password=NONE, host=host, port=port,
+                               path=(find 5), query=(find 7), frag=(find 9)})
                   end
              | a::r::[] =>
                   let
-                     val (user, password) = auth a
+                     val (user, pass) = auth a
                      val (host, port) = remote r
                   in
-                     http{user=user, password=password, host=host, port=port,
-                          path=(find 5), query=(find 7), frag=(find 9)}
+                     SOME(http{user=user, password=pass, host=host,
+                               port=port, path=(find 5), query=(find 7),
+                               frag=(find 9)})
                   end
-             | _ => http{user="", password="", host="", port=80,
-                         path=(find 5), query=(find 7), frag=(find 9)}
+             | _ => NONE
       in
-         case (find 2) of
+         case (find' 2) of
             "http"   => parse_http ()
-          | s        => unknown{scheme=s, auth=(find 4), path=(find 5),
-                                query=(find 7), frag=(find 9)}
+          | s        => SOME(unknown{scheme=s, auth=(find' 4), path=(find 5),
+                                     query=(find 7), frag=(find 9)})
       end
 
       (* Regular expression from RFC 2396, appendix B. *)
@@ -90,22 +98,24 @@ struct
    in
       case StringCvt.scanString (DFA.find re) str of
          NONE      => NONE
-       | SOME tree => SOME(match str tree)
+       | SOME tree => match str tree
    end
 
    fun toString (http{user, password, host, port, path, query, frag}) =
       "http://" ^
-      (if user <> "" andalso password <> "" then user ^ ":" ^ password ^ "@"
-       else
-          if user <> "" andalso password = "" then user ^ "@" else "") ^
+      (case (user, password) of
+          (SOME(u), SOME(p)) => u ^ ":" ^ p ^ "@"
+        | (SOME(u), NONE) => u ^ "@"
+        | _ => "") ^
       host ^
-      (if port = 80 orelse port = 0 then "" else ":" ^ Int.toString port) ^
-      path ^
-      (if query = "" then "" else "?" ^ query) ^
-      (if frag = "" then "" else "#" ^ frag)
+      (case port of SOME(p) => ":" ^ Int.toString p | _ => "") ^
+      (case path of SOME(p) => p | _ => "") ^
+      (case query of SOME(q) => "?" ^ q | _ => "") ^
+      (case frag of SOME(f) => "#" ^ f | _ => "")
 
      | toString (unknown{scheme, auth, path, query, frag}) =
-      scheme ^ "://" ^ auth ^ path ^
-      (if query = "" then "" else "?" ^ query) ^
-      (if frag = "" then "" else "#" ^ query)
+      scheme ^ "://" ^ auth ^
+      (case path of SOME(p) => p | _ => "") ^
+      (case query of SOME(q) => "?" ^ q | _ => "") ^
+      (case frag of SOME(f) => "#" ^ f | _ => "")
 end

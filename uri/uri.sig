@@ -1,6 +1,6 @@
 (* Structure to manipulate and verify URIs, in accordance with RFC 2396.
  *
- * $Id: uri.sig,v 1.3 2004/07/26 18:45:41 chris Exp $
+ * $Id: uri.sig,v 1.4 2004/07/27 02:44:22 chris Exp $
  *)
 
 (* Copyright (c) 2004, Chris Lumens
@@ -33,10 +33,11 @@
  *)
 signature URI =
 sig
-   datatype URI = http of {user: string, password: string, host: string,
-                           port: int, path: string, query: string, frag: string}
-                | unknown of {scheme: string, auth: string, path: string,
-                              query: string, frag: string}
+   datatype URI = http of {user: string option, password: string option,
+                           host: string, port: int option, path: string option,
+                           query: string option, frag: string option}
+                | unknown of {scheme: string, auth: string, path: string option,
+                              query: string option, frag: string option}
 
    (* Given a string, return the appropriate URI from the above datatype.
     * For URIs that are understood by this parser, it will return the
