@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.3 2004/07/27 15:03:48 chris Exp $ *)
+(* $Id: http.sml,v 1.4 2004/08/07 02:05:12 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -157,8 +157,11 @@ struct
                ( BinIO.output (stream, vec) ; do_it (stream, conn) )
          end
 
-         val filename = List.last (String.tokens (fn c => c = #"/")
-                                                 (Option.getOpt (path, "/")))
+         val filename = case path of
+                           SOME p => List.last (String.tokens (fn c => c = #"/")
+                                                              p)
+                         | NONE   => "index.html"
+
          val (code, msg) = status hdrs
       in
          if code >= 400 then
