@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.5 2004/08/08 19:50:31 chris Exp $ *)
+(* $Id: http.sml,v 1.6 2004/08/11 15:26:40 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -31,6 +31,22 @@
 structure HTTP :> HTTP =
 struct
    exception StatusCode of int * string
+
+   (* Return the value of the specified header. *)
+   fun header (key, hdr::lst) =
+      if String.isPrefix key hdr then 
+         let
+            open Substring
+
+            (* Remove the header name and the colon. *)
+            val value = dropl (fn ch => not (Char.isSpace ch)) (full hdr)
+         in
+            (* Remove leading space so we just have the header's value. *)
+            SOME(string (dropl Char.isSpace value))
+         end
+      else
+         header (key, lst)
+     | header (key, []) = NONE
 
    (* Fetch the file described by the provided URI. *)
    fun get (URI.http{user, password, host, port, path, query, frag}) =
@@ -128,7 +144,7 @@ struct
           *)
          fun do_it (stream, conn) =
          let
-            val vec = Socket.recvVec (conn, 1000)
+            val vec = Socket.recvVec (conn, 8192)
          in
             if Word8Vector.length vec = 0 then
                ( close conn ; BinIO.closeOut stream )
@@ -148,26 +164,36 @@ struct
              List.nth (tokens, 2))
          end handle _ => (0, "")
 
+         (* Handle redirected URLs. *)
+         fun redirected conn e hdrs =
+            case header ("Location", hdrs) of
+               SOME loc => (case URI.parse loc of
+                               SOME uri => ( close conn ; get uri )
+                             | NONE     => ( close conn ; raise e )
+                           )
+             | NONE     => ( close conn ; raise e )
+
          val filename = case path of
-                           SOME p => List.last (String.tokens (fn c => c = #"/")
-                                                              p)
-                         | NONE   => "index.html"
+                           SOME p => (case OS.Path.file p of
+                                         ""  => "index.html"
+                                       | str => str)
+                         | NONE     => "index.html"
 
          val (code, msg) = status hdrs
+         val SCexn = StatusCode (code, msg)
+         val Fexn  = Fail ("file with name " ^ filename ^ " already exists")
       in
          if code >= 400 then
-            ( close conn ; raise StatusCode (code, msg) )
+            ( close conn ; raise SCexn )
          else
             if code >= 300 then
-               ( close conn ; print "redirected URL\n" ; "" )
+               redirected conn SCexn hdrs
             else
-               if not OS.FileSys.access (filename, []) then
+               if not (OS.FileSys.access (filename, [])) then
                   ( do_it (BinIO.openOut filename, conn) ;
                     OS.FileSys.fullPath filename )
                else
-                  ( close conn ;
-                    raise Fail ("file with name " ^ filename ^
-                                " already exists") )
+                  ( close conn ; raise Fexn )
       end
 
       val conn = connect host (Option.getOpt (port, 80))
@@ -180,12 +206,4 @@ struct
    end
 
    | get (_) = raise URI.SchemeUnsupported
-
-   (* Return the value of the specified header. *)
-   fun header (key, hdr::lst) =
-      if String.isPrefix key hdr then 
-         SOME(String.concat (tl (String.tokens (fn c => c = #":") hdr)))
-      else
-         header (key, lst)
-     | header (key, []) = NONE
 end
