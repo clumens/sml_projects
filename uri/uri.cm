@@ -1,0 +1,9 @@
+library
+   signature URI
+   structure URI
+is
+   uri.sig
+   uri.sml
+
+   $/basis.cm
+   $/regexp-lib.cm
