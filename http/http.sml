@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.4 2004/08/07 02:05:12 chris Exp $ *)
+(* $Id: http.sml,v 1.5 2004/08/08 19:50:31 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -32,30 +32,7 @@ structure HTTP :> HTTP =
 struct
    exception StatusCode of int * string
 
-   (* Convert a string into a vector slice. *)
-   fun str_to_slice str =
-      (Word8VectorSlice.full o Byte.stringToBytes) str
-
-   (* Return the HTTP status code from the header list.  The status line
-    * must be at the head of the list, just like it'd be returned from the
-    * server.
-    *)
-   fun status hdrs =
-   let
-      val tokens = String.tokens (fn ch => ch = #" ") (hd hdrs)
-   in
-      (Option.getOpt (Int.fromString (List.nth (tokens, 1)), 0),
-       List.nth (tokens, 2))
-   end handle _ => (0, "")
-
-   (* Return the value of the specified header. *)
-   fun header (key, hdr::lst) =
-      if String.isPrefix key hdr then 
-         String.concat (tl (String.tokens (fn c => c = #":") hdr))
-      else
-         header (key, lst)
-     | header (key, []) = ""
-
+   (* Fetch the file described by the provided URI. *)
    fun get (URI.http{user, password, host, port, path, query, frag}) =
    let
       (* Connect to the given host on the given port via TCP.  Throws SysErr
@@ -88,10 +65,16 @@ struct
        * characters sent, throwing SysErr on error.
        *)
       fun send_request req conn =
+      let
+         (* Convert a string into a vector slice. *)
+         fun str_to_slice str =
+            (Word8VectorSlice.full o Byte.stringToBytes) str
+      in
          Socket.sendVec (conn, str_to_slice req)
          handle SysErr => ( print "could not send request; socket was closed" ;
                             raise SysErr
                           )
+      end
 
       (* Given an empty string and an open connection, read the headers
        * out of the beginning of the stream.  Returns the headers as a
@@ -139,10 +122,6 @@ struct
 
       fun recv_body (hdrs, conn) =
       let
-         (* Check to see if a file with that name already exists. *)
-         fun file_exists file =
-            OS.FileSys.fullPath file <> "" handle SysErr => false
-
          (* Read the requested file out of the socket and write it to the
           * destination stream.  Closes the connection when we've got the
           * entire file.
@@ -157,6 +136,18 @@ struct
                ( BinIO.output (stream, vec) ; do_it (stream, conn) )
          end
 
+         (* Return the HTTP status code from the header list.  The status line
+          * must be at the head of the list, just like it'd be returned from
+          * the server.
+          *)
+         fun status hdrs =
+         let
+            val tokens = String.tokens (fn ch => ch = #" ") (hd hdrs)
+         in
+            (Option.getOpt (Int.fromString (List.nth (tokens, 1)), 0),
+             List.nth (tokens, 2))
+         end handle _ => (0, "")
+
          val filename = case path of
                            SOME p => List.last (String.tokens (fn c => c = #"/")
                                                               p)
@@ -170,7 +161,7 @@ struct
             if code >= 300 then
                ( close conn ; print "redirected URL\n" ; "" )
             else
-               if file_exists filename = false then
+               if not OS.FileSys.access (filename, []) then
                   ( do_it (BinIO.openOut filename, conn) ;
                     OS.FileSys.fullPath filename )
                else
@@ -189,4 +180,12 @@ struct
    end
 
    | get (_) = raise URI.SchemeUnsupported
+
+   (* Return the value of the specified header. *)
+   fun header (key, hdr::lst) =
+      if String.isPrefix key hdr then 
+         SOME(String.concat (tl (String.tokens (fn c => c = #":") hdr)))
+      else
+         header (key, lst)
+     | header (key, []) = NONE
 end

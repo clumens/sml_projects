@@ -1,4 +1,4 @@
-(* $Id: http.sig,v 1.3 2004/07/27 15:03:48 chris Exp $ *)
+(* $Id: http.sig,v 1.4 2004/08/08 19:50:31 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -33,4 +33,5 @@ sig
    exception StatusCode of int * string
 
    val get: URI.URI -> string
+   val header: string * string list -> string option
 end
