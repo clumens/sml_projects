@@ -22,12 +22,12 @@ Ini exports one function:
    val parse: string -> IniDict.section_dict
 
 Before you can do anything else, you'll need to call Ini.parse with a
-filename.  parse throws the Io exception if it is provided a bad filename
-or a file it cannot read, and the ParseError exception if the INI file is
-not valid.  You are given back a dictionary containing a mapping from
-section names to other dictionaries.  These other dictionaries are
-mappings from settings to values, where the values are lists.  See SPEC
-for further details.
+filename.  parse throws the IO.Io exception if it is provided a bad
+filename or a file it cannot read, and the Ini.InvalidFile exception if
+the INI file is not valid.  You are given back a dictionary containing a
+mapping from section names to other dictionaries.  These other
+dictionaries are mappings from settings to values, where the values are
+lists.  See SPEC for further details.
 
 Now that you've got an IniDict.section_dict, you can use the IniDict
 structure to extract useful information from it.  You can use the

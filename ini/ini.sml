@@ -1,4 +1,4 @@
-(* $Id: ini.sml,v 1.3 2004/08/08 00:32:10 chris Exp $ *)
+(* $Id: ini.sml,v 1.4 2004/08/08 23:02:36 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -29,9 +29,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
 structure Ini :> sig
+   exception InvalidFile
+
    val parse: string -> IniDict.section_dict
 end =
 struct
+   (* Thrown when there's a parse error with the file. *)
+   exception InvalidFile
+
    structure IniParserLrVals =
      IniParserLrValsFun(structure Token = LrParser.Token)
 
@@ -62,4 +67,5 @@ struct
    in
       TextIO.closeIn file ; dict
    end
+   handle ParseError => raise InvalidFile
 end

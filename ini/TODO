@@ -2,3 +2,4 @@
 - line number resetting in lexer (stupid side-effects)
 - handle goofy characters
 - examine which exceptions we might face internally and handle them
+- add a signature to IniDict
