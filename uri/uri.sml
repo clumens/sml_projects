@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.10 2004/08/08 21:29:21 chris Exp $ *)
+(* $Id: uri.sml,v 1.11 2004/08/19 16:20:43 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -44,103 +44,106 @@ struct
    structure DFA = RegExpFn(structure P=AwkSyntax
                             structure E=BackTrackEngine)
 
-   fun parse str =
-   let
-      fun match str tree =
-      let
-         fun find n =
-            case MatchTree.nth (tree, n) of
-               SOME {pos, len} =>
-                  let
-                     val sub = String.substring (str, pos, len)
-                  in
-                     if sub = "" then NONE else SOME(sub)
-                  end
-             | NONE => NONE
-
-         fun find' n =
-            Option.getOpt (find n, "")
-
-         fun auth str =
-            case (String.tokens (fn ch => ch = #":") str) of
-               n::[]    => (SOME n, NONE)
-             | n::p::[] => (SOME n, SOME p)
-             | _        => (NONE, NONE)
-
-         fun remote str =
-            case (String.tokens (fn ch => ch = #":") str) of
-               h::[]    => (h, NONE)
-             | h::p::[] => (h, Int.fromString p)
-             | _        => ("", NONE)
-
-         fun parse_file () =
-            Option.map (fn path => file{host=(find 4), path=path})
-                       (find 5)
-
-         fun parse_ftp () =
-            case (String.tokens (fn ch => ch = #"@") (find' 4)) of
-               r::[] =>
-                  let
-                     val (host, port) = remote r
-                  in
-                     SOME(ftp{user=NONE, password=NONE, host=host, port=port,
-                              path=(find 5)})
-                  end
-             | a::r::[] =>
-                  let
-                     val (user, pass) = auth a
-                     val (host, port) = remote r
-                  in
-                     SOME(ftp{user=user, password=pass, host=host, port=port,
-                              path=(find 5)})
-                  end
-             | _ => NONE
-
-         fun parse_http () =
-            case (String.tokens (fn ch => ch = #"@") (find' 4)) of
-               r::[] =>
-                  let
-                     val (host, port) = remote r
-                  in
-                     SOME(http{user=NONE, password=NONE, host=host, port=port,
-                               path=(find 5), query=(find 7), frag=(find 9)})
-                  end
-             | a::r::[] =>
-                  let
-                     val (user, pass) = auth a
-                     val (host, port) = remote r
-                  in
-                     SOME(http{user=user, password=pass, host=host,
-                               port=port, path=(find 5), query=(find 7),
-                               frag=(find 9)})
-                  end
-             | _ => NONE
-      in
-         case (find' 2) of
-            ""       => NONE
-          | "file"   => parse_file ()
-          | "ftp"    => parse_ftp ()
-          | "http"   => parse_http ()
-          | s        => SOME(unknown{scheme=s, auth=(find' 4), path=(find 5),
-                                     query=(find 7), frag=(find 9)})
-      end
-
-      (* Remove whitespace from the head and back of the string. *)
-      fun dropWS str =
-      let
-         open Substring
-      in
-         string (((dropr Char.isSpace) o (dropl Char.isSpace)) (full str))
-      end
-
+   local
       (* Regular expression from RFC 2396, appendix B. *)
       val re = DFA.compileString "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?"
-
-      val str' = dropWS str
    in
-      case StringCvt.scanString (DFA.find re) str' of
-         SOME tree => match str' tree
-       | NONE      => NONE
+      fun parse str =
+      let
+         fun match str tree =
+         let
+            fun find n =
+               case MatchTree.nth (tree, n) of
+                  SOME {pos, len} =>
+                     let
+                        val sub = String.substring (str, pos, len)
+                     in
+                        if sub = "" then NONE else SOME(sub)
+                     end
+                | NONE => NONE
+
+            fun find' n =
+               Option.getOpt (find n, "")
+
+            fun auth str =
+               case (String.tokens (fn ch => ch = #":") str) of
+                  n::[]    => (SOME n, NONE)
+                | n::p::[] => (SOME n, SOME p)
+                | _        => (NONE, NONE)
+
+            fun remote str =
+               case (String.tokens (fn ch => ch = #":") str) of
+                  h::[]    => (h, NONE)
+                | h::p::[] => (h, Int.fromString p)
+                | _        => ("", NONE)
+
+            fun parse_file () =
+               Option.map (fn path => file{host=(find 4), path=path})
+                          (find 5)
+
+            fun parse_ftp () =
+               case (String.tokens (fn ch => ch = #"@") (find' 4)) of
+                  r::[] =>
+                     let
+                        val (host, port) = remote r
+                     in
+                        SOME(ftp{user=NONE, password=NONE, host=host, port=port,
+                                 path=(find 5)})
+                     end
+                | a::r::[] =>
+                     let
+                        val (user, pass) = auth a
+                        val (host, port) = remote r
+                     in
+                        SOME(ftp{user=user, password=pass, host=host, port=port,
+                                 path=(find 5)})
+                     end
+                | _ => NONE
+
+            fun parse_http () =
+               case (String.tokens (fn ch => ch = #"@") (find' 4)) of
+                  r::[] =>
+                     let
+                        val (host, port) = remote r
+                     in
+                        SOME(http{user=NONE, password=NONE, host=host,
+                                  port=port, path=(find 5), query=(find 7),
+                                  frag=(find 9)})
+                     end
+                | a::r::[] =>
+                     let
+                        val (user, pass) = auth a
+                        val (host, port) = remote r
+                     in
+                        SOME(http{user=user, password=pass, host=host,
+                                  port=port, path=(find 5), query=(find 7),
+                                  frag=(find 9)})
+                     end
+                | _ => NONE
+         in
+            case (find' 2) of
+               ""       => NONE
+             | "file"   => parse_file ()
+             | "ftp"    => parse_ftp ()
+             | "http"   => parse_http ()
+             | s        => SOME(unknown{scheme=s, auth=(find' 4), path=(find 5),
+                                        query=(find 7), frag=(find 9)})
+         end
+
+         (* Remove whitespace from the head and back of the string. *)
+         fun dropWS str =
+         let
+            open Substring
+         in
+            string (((dropr Char.isSpace) o (dropl Char.isSpace)) (full str))
+         end
+
+         val str' = dropWS str
+      in
+         case StringCvt.scanString (DFA.find re) str' of
+            SOME tree => match str' tree
+          | NONE      => NONE
+      end
    end
 
    fun toString uri =

@@ -1,7 +1,9 @@
 URI-1.1
 =======
 - parse: Trim whitespace from head and tail of string before looking for a
-         valid URI.
+  valid URI.
+- parse: Broke the regular expression compilation step out of parse so it
+  doesn't happen every time the function is called.
 
 URI-1.0
 =======
