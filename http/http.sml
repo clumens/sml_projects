@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.7 2004/08/11 15:33:03 chris Exp $ *)
+(* $Id: http.sml,v 1.8 2004/08/11 16:22:06 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -30,6 +30,8 @@
  *)
 structure HTTP :> HTTP =
 struct
+   type dl = {filename: string, time: Time.time}
+
    exception StatusCode of int * string
 
    (* Return the value of the specified header. *)
@@ -56,19 +58,12 @@ struct
        *)
       fun connect host port =
       let
-         (* Given the hostname as a string, returns the corresponding address
-          * type.  Throws Fail if the host could not be found.
-          *)
          fun resolve host =
-            case (NetHostDB.getByName host) of
-               SOME (entry) => NetHostDB.addr entry
-             | NONE         => raise Fail ("unknown host: " ^ host)
-
-         val sock   = INetSock.TCP.socket()
-         val addr   = INetSock.toAddr (resolve host, port)
-         val _      = Socket.connect (sock, addr)
-      in
-         sock
+            #addr (SockUtil.resolveAddr {host=SockUtil.HostName(host),
+                                         port=NONE})
+            handle BadAddr => raise Fail ("unknown host: " ^ host)
+      in 
+         SockUtil.connectINetStrm {addr=(resolve host), port=port}
       end
 
       (* Close the connection and return nothing.  If conn is already
@@ -80,17 +75,9 @@ struct
       (* Sends a request to the remote host.  Returns the number of
        * characters sent, throwing SysErr on error.
        *)
-      fun send_request req conn =
-      let
-         (* Convert a string into a vector slice. *)
-         fun str_to_slice str =
-            (Word8VectorSlice.full o Byte.stringToBytes) str
-      in
-         Socket.sendVec (conn, str_to_slice req)
-         handle SysErr => ( print "could not send request; socket was closed" ;
-                            raise SysErr
-                          )
-      end
+      fun send_request conn req =
+         SockUtil.sendStr (conn, req)
+         handle SysErr => ( print "could not send request" ; raise SysErr )
 
       (* Given an empty string and an open connection, read the headers
        * out of the beginning of the stream.  Returns the headers as a
@@ -181,7 +168,7 @@ struct
 
          val (code, msg) = status hdrs
          val SCexn = StatusCode (code, msg)
-         val Fexn  = Fail ("file with name " ^ filename ^ " already exists")
+         val Fexn  = Fail ("file " ^ filename ^ " already exists")
       in
          if code >= 400 then
             ( close conn ; raise SCexn )
@@ -189,9 +176,16 @@ struct
             if code >= 300 then
                redirected conn SCexn hdrs
             else
+               (* Download file, returning full path and time taken. *)
                if not (OS.FileSys.access (filename, [])) then
-                  ( do_it (BinIO.openOut filename, conn) ;
-                    OS.FileSys.fullPath filename )
+                  let
+                     val t = Timer.startRealTimer()
+                  in
+                     ( do_it (BinIO.openOut filename, conn) ;
+                       {filename=(OS.FileSys.fullPath filename),
+                        time=(Timer.checkRealTimer t)}
+                     )
+                  end
                else
                   ( close conn ; raise Fexn )
       end
@@ -202,7 +196,7 @@ struct
                  "User-Agent: SML/NJ Getter\r\n" ^
                  "Connection: close\r\n\r\n"
    in
-      send_request req conn ; recv_body (recv_headers ("", conn))
+      send_request conn req ; recv_body (recv_headers ("", conn))
    end
 
    | get (_) = raise URI.SchemeUnsupported
