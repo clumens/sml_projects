@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.5 2004/07/27 02:44:23 chris Exp $ *)
+(* $Id: uri.sml,v 1.6 2004/07/27 13:24:13 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -30,7 +30,9 @@
  *)
 structure URI :> URI =
 struct
-   datatype URI = http of {user: string option, password: string option,
+   datatype URI = ftp of {user: string option, password: string option,
+                          host: string, port: int option, path: string option}
+                | http of {user: string option, password: string option,
                            host: string, port: int option, path: string option,
                            query: string option, frag: string option}
                 | unknown of {scheme: string, auth: string, path: string option,
@@ -45,11 +47,12 @@ struct
       let
          fun find n =
             case MatchTree.nth (tree, n) of
-               SOME {pos, len} => let
-                                     val sub = String.substring (str, pos, len)
-                                  in
-                                     if sub = "" then NONE else SOME (sub)
-                                  end
+               SOME {pos, len} =>
+                  let
+                     val sub = String.substring (str, pos, len)
+                  in
+                     if sub = "" then NONE else SOME(sub)
+                  end
              | NONE => NONE
 
          fun find' n =
@@ -66,6 +69,25 @@ struct
                h::[]    => (h, NONE)
              | h::p::[] => (h, Int.fromString p)
              | _        => ("", NONE)
+
+         fun parse_ftp () =
+            case (String.tokens (fn ch => ch = #"@") (find' 4)) of
+               r::[] =>
+                  let
+                     val (host, port) = remote r
+                  in
+                     SOME(ftp{user=NONE, password=NONE, host=host, port=port,
+                              path=(find 5)})
+                  end
+             | a::r::[] =>
+                  let
+                     val (user, pass) = auth a
+                     val (host, port) = remote r
+                  in
+                     SOME(ftp{user=user, password=pass, host=host, port=port,
+                              path=(find 5)})
+                  end
+             | _ => NONE
 
          fun parse_http () =
             case (String.tokens (fn ch => ch = #"@") (find' 4)) of
@@ -88,7 +110,8 @@ struct
              | _ => NONE
       in
          case (find' 2) of
-            "http"   => parse_http ()
+            "ftp"    => parse_ftp ()
+          | "http"   => parse_http ()
           | s        => SOME(unknown{scheme=s, auth=(find' 4), path=(find 5),
                                      query=(find 7), frag=(find 9)})
       end
@@ -97,25 +120,46 @@ struct
       val re = DFA.compileString "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?"
    in
       case StringCvt.scanString (DFA.find re) str of
-         NONE      => NONE
-       | SOME tree => match str tree
+         SOME tree => match str tree
+       | NONE      => NONE
    end
 
-   fun toString (http{user, password, host, port, path, query, frag}) =
-      "http://" ^
-      (case (user, password) of
-          (SOME(u), SOME(p)) => u ^ ":" ^ p ^ "@"
-        | (SOME(u), NONE) => u ^ "@"
-        | _ => "") ^
-      host ^
-      (case port of SOME(p) => ":" ^ Int.toString p | _ => "") ^
-      (case path of SOME(p) => p | _ => "") ^
-      (case query of SOME(q) => "?" ^ q | _ => "") ^
-      (case frag of SOME(f) => "#" ^ f | _ => "")
+   fun toString uri =
+   let
+      (* Special version of Option.map. *)
+      fun mapEmpty f opt =
+         case opt of
+            SOME v => f v
+          | NONE   => ""
 
-     | toString (unknown{scheme, auth, path, query, frag}) =
-      scheme ^ "://" ^ auth ^
-      (case path of SOME(p) => p | _ => "") ^
-      (case query of SOME(q) => "?" ^ q | _ => "") ^
-      (case frag of SOME(f) => "#" ^ f | _ => "")
+      (* Yes, this is the identity function. *)
+      fun I i = i
+
+      (* Make chunks of the return string. *)
+      fun F frag = "#" ^ frag
+      fun P port = ":" ^ Int.toString port
+      fun Q query = "?" ^ query
+
+      (* Make the user & password portion of the return string. *)
+      fun cred_string (user, password) =
+         case (user, password) of
+            (SOME u, SOME p) => u ^ ":" ^ p ^ "@"
+          | (SOME u, NONE)   => u ^ "@"
+          | _                => ""
+
+      fun do_it (ftp{user, password, host, port, path}) =
+         "ftp://" ^ cred_string (user, password) ^ host ^
+         mapEmpty P port ^ mapEmpty I path
+
+        | do_it (http{user, password, host, port, path, query, frag}) =
+         "http://" ^ host ^ cred_string (user, password) ^
+         mapEmpty P port ^ mapEmpty I path ^ mapEmpty Q query ^
+         mapEmpty F frag
+
+        | do_it (unknown{scheme, auth, path, query, frag}) =
+         scheme ^ "://" ^ auth ^ mapEmpty I path ^
+         mapEmpty Q query ^ mapEmpty F frag
+   in
+      do_it uri
+   end
 end

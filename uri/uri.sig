@@ -1,6 +1,6 @@
 (* Structure to manipulate and verify URIs, in accordance with RFC 2396.
  *
- * $Id: uri.sig,v 1.4 2004/07/27 02:44:22 chris Exp $
+ * $Id: uri.sig,v 1.5 2004/07/27 13:24:13 chris Exp $
  *)
 
 (* Copyright (c) 2004, Chris Lumens
@@ -33,7 +33,9 @@
  *)
 signature URI =
 sig
-   datatype URI = http of {user: string option, password: string option,
+   datatype URI = ftp of {user: string option, password: string option,
+                          host: string, port: int option, path: string option}
+                | http of {user: string option, password: string option,
                            host: string, port: int option, path: string option,
                            query: string option, frag: string option}
                 | unknown of {scheme: string, auth: string, path: string option,
