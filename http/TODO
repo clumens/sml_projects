@@ -1,4 +1,3 @@
-- handle passing a query to the server
 - use option types internally where it makes sense
 - support continuation of downloads
 - save headers to a file
