@@ -1,6 +1,8 @@
 Ini-0.2
 =======
 - Ini: throw Ini.InvalidFile instead of ParseError.
+- Ini: moved Dict.toString into Ini.  Also, it now outputs a valid INI file.
+- correct line numbers in error reporting
 
 Ini-0.1
 =======

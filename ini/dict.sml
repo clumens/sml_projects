@@ -1,4 +1,4 @@
-(* $Id: dict.sml,v 1.3 2004/08/08 02:25:27 chris Exp $ *)
+(* $Id: dict.sml,v 1.4 2004/08/11 23:44:04 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -67,18 +67,4 @@ struct
    (* Create a blank dictionary. *)
    fun mkDict () =
       HashTable.mkTable (HashString.hashString, op =) (47, NotFound)
-
-   (* Convert an ini dictionary into a string suitable for printing. *)
-   fun toString dict =
-   let
-      val I = fn i => i
-
-      val sect_str = fn (k, v, str) => str ^ "\t" ^ k ^ " => " ^
-                                       (ListFormat.listToString I v) ^
-                                       "\n"
-   in
-      HashTable.foldi (fn (k, v, str) => str ^ k ^ ":\n" ^
-                                         (HashTable.foldi sect_str "" v))
-                      "" dict
-   end
 end

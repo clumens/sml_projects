@@ -45,13 +45,15 @@ key or section does not exist.  Note that the value is always a list,
 though it may be singleton if the key only appeared once in a section of
 the INI file.
 
-IniDict also provides the toString function:
+Ini also provides the toString function:
 
    val toString: IniDict.section_dict -> string
 
-This function converts a dictionary into a string suitable for printing.
-It does not produce a valid INI file, as it is more designed for debugging
-or display.
+This function converts a dictionary into a string suitable for printing or
+writing out to a file.  This string is a valid INI file format, though
+Ini.toString (Ini.parse "file") is not an identity function.  For example,
+the resulting string will have all the values of the same key grouped
+together regardless of the ordering in the input file.
 
 
 Specification

@@ -1,4 +1,4 @@
-(* $Id: ini.sml,v 1.5 2004/08/11 23:11:31 chris Exp $ *)
+(* $Id: ini.sml,v 1.6 2004/08/11 23:44:04 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -29,12 +29,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
 structure Ini :> sig
+   (* Thrown when there's a parse error with the file. *)
    exception InvalidFile
 
+   (* Read in an ini file and return a dictionary of settings. *)
    val parse: string -> IniDict.section_dict
+
+   (* Convert an ini file in dictionary form back into a string. *)
+   val toString: IniDict.section_dict -> string
 end =
 struct
-   (* Thrown when there's a parse error with the file. *)
    exception InvalidFile
 
    structure IniParserLrVals =
@@ -46,7 +50,6 @@ struct
                               structure ParserData = IniParserLrVals.ParserData
                               structure Lex = IniLex)
 
-   (* Read in an ini file and return a dictionary of settings. *)
    fun parse filename =
    let
       (* Reset the parser state for correct error reporting. *)
@@ -70,4 +73,21 @@ struct
       TextIO.closeIn file ; dict
    end
    handle ParseError => raise InvalidFile
+
+   (* Convert an ini dictionary into a string suitable for printing. *)
+   fun toString dict =
+   let
+      val f = fn i => i
+
+      val sect_str =
+         fn (key, lst, str) => str ^
+                               String.concat (List.map (fn v => key ^ "=" ^
+                                                                v ^ "\n")
+                                                       lst)
+   in
+      HashTable.foldi (fn (k, v, str) => str ^ "[" ^ k ^ "]\n" ^
+                                         (HashTable.foldi sect_str "" v) ^
+                                         "\n")
+                      "" dict
+   end
 end
