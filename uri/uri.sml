@@ -1,4 +1,4 @@
-(* $Id: uri.sml,v 1.3 2004/07/26 18:45:41 chris Exp $ *)
+(* $Id: uri.sml,v 1.4 2004/07/26 19:02:43 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -53,17 +53,17 @@ struct
              | n::p::[] => (n, p)
              | _        => ("", "")
 
-         fun remote str default_port =
+         fun remote str =
             case (String.tokens (fn ch => ch = #":") str) of
-               h::[]    => (h, default_port)
-             | h::p::[] => (h, Option.getOpt (Int.fromString p, default_port))
-             | _        => ("", default_port)
+               h::[]    => (h, 80)
+             | h::p::[] => (h, Option.getOpt (Int.fromString p, 80))
+             | _        => ("", 80)
 
-         fun parse_http default_port =
+         fun parse_http () =
             case (String.tokens (fn ch => ch = #"@") (find 4)) of
                r::[] =>
                   let
-                     val (host, port) = remote r default_port
+                     val (host, port) = remote r
                   in
                      http{user="", password="", host=host, port=port,
                           path=(find 5), query=(find 7), frag=(find 9)}
@@ -71,17 +71,16 @@ struct
              | a::r::[] =>
                   let
                      val (user, password) = auth a
-                     val (host, port) = remote r default_port
+                     val (host, port) = remote r
                   in
                      http{user=user, password=password, host=host, port=port,
                           path=(find 5), query=(find 7), frag=(find 9)}
                   end
-             | _ => http{user="", password="", host="", port=default_port,
+             | _ => http{user="", password="", host="", port=80,
                          path=(find 5), query=(find 7), frag=(find 9)}
       in
          case (find 2) of
-            "http"   => parse_http 80
-          | "https"  => parse_http 8080
+            "http"   => parse_http ()
           | s        => unknown{scheme=s, auth=(find 4), path=(find 5),
                                 query=(find 7), frag=(find 9)}
       end
