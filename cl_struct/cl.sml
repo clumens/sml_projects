@@ -1,6 +1,6 @@
 (* Utility functions I've developed that don't belong anywhere else.
  *
- * $Id: cl.sml,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: cl.sml,v 1.2 2004/06/25 01:57:58 chris Exp $
  *)
 structure Cl :> CL =
 struct
@@ -16,7 +16,9 @@ struct
          do_it lst []
       end
 
-      fun split n lst =
+      fun split n [] =
+         raise Empty
+        | split n lst =
       let
          fun do_split n lst retval =
             if length lst < n then
@@ -25,7 +27,8 @@ struct
             else
                do_split n (List.drop (lst, n)) (List.take (lst, n)::retval)
       in
-         do_split n lst []
+         if n <= 0 then [lst]
+         else do_split n lst []
       end
 
       fun takewhile f [] = []
