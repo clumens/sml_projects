@@ -1,0 +1,20 @@
+About
+=====
+HTTP is a structure for working with the HTTP/1.0 protocol for Standard ML
+of New Jersey (SML/NJ).
+
+
+Licensing
+=========
+It is licensed under a BSD style license in order to promote the use of
+the code and SML in general.  See the top of any source file for the terms
+of the license.
+
+
+Usage
+=====
+
+
+Bugs
+====
+Please send any bug reports or comments to chris@bangmoney.org.

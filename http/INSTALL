@@ -1,0 +1,33 @@
+Requirements
+============
+The HTTP structure requires:
+
+   - SML/NJ with CM, which should be included with any SML/NJ installation
+
+   - My URI structure (http://www.bangmoney.org/projects/sml/URI), located
+     in the ../uri directory relative to this source tree
+
+I am not aware of any version-specific code being used in the structure
+that requires a particular version of SML/NJ to be installed.  If you want
+to be on the safe side, I have tested with version 110.48.
+
+
+Installation
+============
+I'm not aware of any really good way to install add-on SML structures.
+You can add the HTTP directory to your project and then add a line like the
+following to the bottom of your project's .cm file:
+
+   path/to/http/http.cm
+
+This will cause CM to build the HTTP structure as part of your project and
+autoload it.
+
+Currently, the URI structure source directory is required to be at the
+same directory level as this source tree.  I am working on a better way to
+do this, hopefully in time for the 1.0 release.
+
+
+Bugs
+====
+Please send all bug reports or comments to chris@bangmoney.org.
