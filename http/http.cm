@@ -1,0 +1,8 @@
+library
+   signature HTTP
+   structure HTTP
+is
+   http.sig
+   http.sml
+
+   $/basis.cm
