@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.8 2004/08/11 16:22:06 chris Exp $ *)
+(* $Id: http.sml,v 1.9 2004/08/18 21:16:13 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -160,11 +160,9 @@ struct
                            )
              | NONE     => ( close conn ; raise e )
 
-         val filename = case path of
-                           SOME p => (case OS.Path.file p of
-                                         ""  => "index.html"
-                                       | str => str)
-                         | NONE     => "index.html"
+         val filename = case OS.Path.file (Option.getOpt (path, "")) of
+                           ""  => "index.html"
+                         | str => str
 
          val (code, msg) = status hdrs
          val SCexn = StatusCode (code, msg)
@@ -190,8 +188,15 @@ struct
                   ( close conn ; raise Fexn )
       end
 
+      (* Now we have to put the URI back into a string, but only the last
+       * part so we don't want to go through URI.toString.
+       *)
+      val path' = Option.getOpt (path, "/") ^
+                  (case query of SOME q => "?" ^ q | NONE => "") ^
+                  (case frag of SOME f => "#" ^ f | NONE => "")
+
       val conn = connect host (Option.getOpt (port, 80))
-      val req  = "GET " ^ (Option.getOpt (path, "/")) ^ " HTTP/1.0\r\n" ^
+      val req  = "GET " ^ path' ^ " HTTP/1.0\r\n" ^
                  "Host: " ^ host ^ "\r\n" ^
                  "User-Agent: SML/NJ Getter\r\n" ^
                  "Connection: close\r\n\r\n"
