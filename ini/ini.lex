@@ -1,4 +1,4 @@
-(* $Id: ini.lex,v 1.5 2004/08/07 15:39:54 chris Exp $ *)
+(* $Id: ini.lex,v 1.6 2004/08/08 00:15:57 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -60,7 +60,7 @@ ws       = [\ \t];
 <INITIAL> "]"     => (Tokens.RBRACK(!lineno, !lineno));
 <INITIAL> "="     => (YYBEGIN VAL ; Tokens.EQUAL(!lineno, !lineno));
 
-<INITIAL,COMMENT> "\n"  => (lineno := !lineno + 1; lex());
+<INITIAL,COMMENT> "\n"  => (lineno := !lineno + 1; YYBEGIN INITIAL; lex());
 <COMMENT> .+            => (lex());
 
 <VAL> "\n"     => (lineno := !lineno + 1; YYBEGIN INITIAL;
