@@ -1,4 +1,4 @@
-(* $Id: ini.sml,v 1.6 2004/08/11 23:44:04 chris Exp $ *)
+(* $Id: ini.sml,v 1.7 2004/08/19 01:39:44 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -28,16 +28,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
-structure Ini :> sig
-   (* Thrown when there's a parse error with the file. *)
-   exception InvalidFile
-
-   (* Read in an ini file and return a dictionary of settings. *)
-   val parse: string -> IniDict.section_dict
-
-   (* Convert an ini file in dictionary form back into a string. *)
-   val toString: IniDict.section_dict -> string
-end =
+structure Ini :> INI =
 struct
    exception InvalidFile
 

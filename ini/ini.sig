@@ -1,4 +1,4 @@
-(* $Id: ini.cm,v 1.6 2004/08/19 01:39:44 chris Exp $ *)
+(* $Id: ini.sig,v 1.1 2004/08/19 01:39:44 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -28,21 +28,14 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
-library
-   signature INI
+signature INI =
+sig
+   (* Thrown when there's a parse error with the file. *)
+   exception InvalidFile
 
-   structure Ini
-   structure IniDict
-   structure IniError
-is
-   ini.sig
+   (* Read in an ini file and return a dictionary of settings. *)
+   val parse: string -> IniDict.section_dict
 
-   dict.sml
-   error.sml
-   ini.lex
-   ini.grm
-   ini.sml
-
-   $/basis.cm
-   $/smlnj-lib.cm
-   $/ml-yacc-lib.cm
+   (* Convert an ini file in dictionary form back into a string. *)
+   val toString: IniDict.section_dict -> string
+end
