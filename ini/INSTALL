@@ -16,6 +16,10 @@ I'm not aware of any really good way to install add-on SML structures.
 You can add the ini directory to your project and then add a line like the
 following to the bottom of your project's .cm file:
 
+   library (path/to/ini/ini.cm)
+
+And the following to the sources section:
+
    path/to/ini/ini.cm
 
 This will cause CM to build the Ini structure as part of your project and

@@ -1,3 +1,10 @@
+Ini-0.3
+=======
+- Ini: added an INI signature so everyone knows what exactly they should be
+  using.
+- added examples
+- INSTALL: corrected instructions for including in your own .cm file
+
 Ini-0.2
 =======
 - Ini: throw Ini.InvalidFile instead of ParseError.
