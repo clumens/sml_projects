@@ -1,4 +1,4 @@
-(* $Id *)
+(* $Id: uri.sml,v 1.3 2004/07/26 18:45:41 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -56,7 +56,7 @@ struct
          fun remote str default_port =
             case (String.tokens (fn ch => ch = #":") str) of
                h::[]    => (h, default_port)
-             | h::p::[] => (h, Option.getOpt (Int.fromString (p), default_port))
+             | h::p::[] => (h, Option.getOpt (Int.fromString p, default_port))
              | _        => ("", default_port)
 
          fun parse_http default_port =
@@ -93,4 +93,20 @@ struct
          NONE      => NONE
        | SOME tree => SOME(match str tree)
    end
+
+   fun toString (http{user, password, host, port, path, query, frag}) =
+      "http://" ^
+      (if user <> "" andalso password <> "" then user ^ ":" ^ password ^ "@"
+       else
+          if user <> "" andalso password = "" then user ^ "@" else "") ^
+      host ^
+      (if port = 80 orelse port = 0 then "" else ":" ^ Int.toString port) ^
+      path ^
+      (if query = "" then "" else "?" ^ query) ^
+      (if frag = "" then "" else "#" ^ frag)
+
+     | toString (unknown{scheme, auth, path, query, frag}) =
+      scheme ^ "://" ^ auth ^ path ^
+      (if query = "" then "" else "?" ^ query) ^
+      (if frag = "" then "" else "#" ^ query)
 end

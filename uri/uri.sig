@@ -1,6 +1,6 @@
 (* Structure to manipulate and verify URIs, in accordance with RFC 2396.
  *
- * $Id: uri.sig,v 1.2 2004/07/26 14:58:54 chris Exp $
+ * $Id: uri.sig,v 1.3 2004/07/26 18:45:41 chris Exp $
  *)
 
 (* Copyright (c) 2004, Chris Lumens
@@ -45,4 +45,7 @@ sig
     * no URI can be found in the string, the NONE option type is returned.
     *)
    val parse: string -> URI option
+
+   (* Convert a URI into a string. *)
+   val toString: URI -> string
 end
