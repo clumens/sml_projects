@@ -4,6 +4,7 @@ Ini-0.3
   using.
 - added examples
 - INSTALL: corrected instructions for including in your own .cm file
+- Ini: handle escaped characters as recognized by String.fromCString
 
 Ini-0.2
 =======

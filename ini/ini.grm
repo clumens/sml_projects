@@ -1,4 +1,4 @@
-(* $Id: ini.grm,v 1.4 2004/08/08 18:47:07 chris Exp $ *)
+(* $Id: ini.grm,v 1.5 2004/10/08 15:36:14 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -81,5 +81,7 @@ header: LBRACK NAME RBRACK          (NAME)
 setting_list: setting_list setting  (setting::setting_list)
             | setting               ([setting])
 
-setting: NAME EQUAL NAME NL         (NAME1, NAME2)
+setting: NAME EQUAL NAME NL         (NAME1,
+                                     Option.getOpt(String.fromCString NAME2,
+                                                   NAME2))
        | NAME EQUAL NL              (NAME1, "")

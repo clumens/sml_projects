@@ -47,7 +47,14 @@ Setting - Each section header is followed by an optionally empty list of
 
           and the value consists of every character following the equals
           and extending to the end of the line.  There are no provisions
-          for continuing a setting across multiple lines.
+          for continuing a setting across multiple lines.  A value may
+          contain any of the special escaped sequences recognized by
+          String.fromCString, which will be automatically translated into
+          the appropriate characters.  If any unknown sequence is found,
+          no translation will be done on the entire string.  A list of
+          recognized sequences may be found at:
+
+             http://www.standardml.org/Basis/char.html#SIG:CHAR.fromCString:VAL
 
 Comment - A comment consists of a semicolon at the beginning of the line
           and continues until the end of the line.  There is no block

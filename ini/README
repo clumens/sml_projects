@@ -8,9 +8,9 @@ Jersey (SML/NJ).
 
 Licensing
 =========
-It is licensed under a BSD style license in order to promote the use of
-the code and SML in general.  See the top of any source file for the terms
-of the license.
+This code is licensed under a BSD style license in order to promote the
+use of the code and SML in general.  See the top of any source file for
+the terms of the license.
 
 
 Usage
@@ -54,6 +54,21 @@ writing out to a file.  This string is a valid INI file format, though
 Ini.toString (Ini.parse "file") is not an identity function.  For example,
 the resulting string will have all the values of the same key grouped
 together regardless of the ordering in the input file.
+
+
+Examples
+========
+A small number of examples are provided in the examples/ directory.  To
+run them, first start SML from the top-level INI directory.  Then:
+
+   Standard ML of New Jersey v110.48 [FLINT v1.5], August 10, 2004
+   - CM.make "ini.cm";
+      ...
+   - use "examples/strings.sml";";
+   [opening examples/strings.sml]
+   left right
+   val it = () : unit
+   -
 
 
 Specification
