@@ -1,4 +1,4 @@
-- handle goofy characters
+- allow characters recognized by fromCString, literal double quotes
 - examine which exceptions we might face internally and handle them
 - add a signature to IniDict
 - allow end-of-line comments?
