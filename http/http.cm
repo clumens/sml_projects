@@ -1,4 +1,4 @@
-(* $Id: http.cm,v 1.4 2004/08/11 16:22:06 chris Exp $ *)
+(* $Id: http.cm,v 1.5 2004/08/12 19:48:58 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -31,6 +31,8 @@
 library
    signature HTTP
    structure HTTP
+
+   library (../uri/uri.cm)
 is
    http.sig
    http.sml
