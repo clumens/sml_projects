@@ -1,0 +1,62 @@
+About
+=====
+URI is a uniform resource indicator library for Standard ML of New Jersey
+(SML/NJ).
+
+
+Licensing
+=========
+It is licensed under a BSD style license in order to promote the use of
+the code and SML in general.  See the top of any source file for the terms
+of the license.
+
+
+Usage
+=====
+See the included INSTALL file for how to install this library.  After
+you've installed it, the structure is very easy to use.  See the signature
+for the API.  Essentially, all the functions are built to either return or
+operate on the URI.URI datatype.  This datatype has the ability to
+represent several known types of URI, as well as a generic "unknown"
+constructor to represent anything it doesn't yet understand in further
+detail.
+
+The parse function takes a string and returns a URI type:
+
+   - URI.parse "http://www.bangmoney.org";
+   val it =
+     SOME
+       (http
+          {frag=NONE,host="www.bangmoney.org",password=NONE,path=NONE,port=NONE,
+           query=NONE,user=NONE}) : URI.URI option
+
+   - URI.parse "http://www.standardml.org/Basis/option.html#Option:STR:SPEC";
+   val it =
+     SOME
+       (http
+          {frag=SOME "Option:STR:SPEC",host="www.standardml.org",password=NONE,
+           path=SOME "/Basis/option.html",port=NONE,query=NONE,user=NONE})
+     : URI.URI option
+
+   - URI.parse "asdf";
+   val it = NONE : URI.URI option
+
+The toString function should be familiar to anyone who's spent enough time
+digging around the basis library.  It takes a URI type and returns a
+string representation:
+
+   - URI.toString (URI.ftp{host="ftp.kernel.org", password=NONE,
+                   path=(SOME "/pub/linux/kernel"), port=NONE, user=NONE});
+   val it = "ftp://ftp.kernel.org/pub/linux/kernel" : string
+
+Note all the optional parts of the various URI.URI constructors.
+
+Finally, URI provides the SchemeUnsupported exception.  This exception is
+not thrown by any of the provided functions.  It's intended for use by
+a function making use of URI, to let its caller know it was passed an
+unsupported scheme.
+
+
+Bugs
+====
+Please send any bug reports or comments to chris@bangmoney.org.
