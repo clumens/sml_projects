@@ -1,4 +1,4 @@
-(* $Id: dict.sml,v 1.4 2004/08/11 23:44:04 chris Exp $ *)
+(* $Id: dict.sml,v 1.5 2004/08/19 02:49:02 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -62,7 +62,7 @@ struct
     * table's exception if the item doesn't exist.
     *)
    fun lookup dict section key =
-      HashTable.lookup dict (HashTable.lookup dict section)
+      HashTable.lookup (HashTable.lookup dict section) key
 
    (* Create a blank dictionary. *)
    fun mkDict () =
