@@ -1,6 +1,6 @@
 (* Create, manage, and delete browser cookies.
  *
- * $Id: cookie.sig,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: cookie.sig,v 1.1.1.1 2004/01/04 17:53:19 chris Exp $
  *)
 signature COOKIE =
 sig

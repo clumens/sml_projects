@@ -5,7 +5,7 @@
  * system as a whole, we simply leave exception handling to the topmost
  * level.
  *
- * $Id: user.sig,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: user.sig,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 signature USER =
 sig

@@ -1,6 +1,6 @@
 (* Make a new collection as a child of the current one.
  *
- * $Id: add_col.sml,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: add_col.sml,v 1.1.1.1 2004/01/04 17:53:19 chris Exp $
  *)
 let
    open Common

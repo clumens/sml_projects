@@ -1,7 +1,7 @@
 (* The login page.  This page shows the login form and interfaces with the
  * database code to authenticate them to the system.
  *
- * $Id: login.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: login.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 let
    open Common

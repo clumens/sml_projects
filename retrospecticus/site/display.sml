@@ -1,6 +1,6 @@
 (* Display an image by itself on a page.
  *
- * $Id: display.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: display.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 let
    open Common

@@ -1,6 +1,6 @@
 (* Messages to be wrapped in a box and displayed to the user.
  *
- * $Id: msg.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: msg.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure Msg =
 struct

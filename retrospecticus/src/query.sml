@@ -3,7 +3,7 @@
  * parameters.  This also provides a central point for user input to be
  * cleansed before hitting the database.
  *
- * $Id: query.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: query.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure Query :> QUERY =
 struct

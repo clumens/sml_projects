@@ -1,6 +1,6 @@
 (* Utility functions to generate SQL query statements.
  *
- * $Id: query.sig,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: query.sig,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 signature QUERY =
 sig

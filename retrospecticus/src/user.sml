@@ -3,7 +3,7 @@
  * Since we don't know enough about what's going on in the system as a
  * whole, we simply leave exception handling to the topmost level.
  *
- * $Id: user.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: user.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure User :> USER =
 struct

@@ -1,7 +1,7 @@
 (* Create a new account in the system.  We allow anyone to do this, but
  * having an account currently doesn't let you do very much.
  *
- * $Id: new_acct.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: new_acct.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 let
    open Common

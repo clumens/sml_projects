@@ -1,7 +1,7 @@
 (* Handle creation and maintainance of the navigation box appearing just
  * over the main content box on each page.
  *
- * $Id: nav.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: nav.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure Nav :> NAV =
 struct

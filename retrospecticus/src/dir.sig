@@ -2,7 +2,7 @@
  * to another, check the existance of a directory, and locate a directory
  * in a tree.
  *
- * $Id: dir.sig,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: dir.sig,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 signature DIR =
 sig

@@ -4,7 +4,7 @@
  * those pages and headers back to Apache, taking care to handle error
  * cases by sending blank HTML strings.
  *
- * $Id: network.sml,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: network.sml,v 1.1.1.1 2004/01/04 17:53:19 chris Exp $
  *)
 structure Network :> NETWORK =
 struct

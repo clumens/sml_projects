@@ -2,7 +2,7 @@
  * letting other people use/see/post/comment/upload/etc.  This gets linked
  * to from the bottom of every page.
  *
- * $Id: copyright.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: copyright.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 let
    open Common

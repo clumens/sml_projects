@@ -3,7 +3,7 @@
  * to create their initial environments, so those should be called first.
  * For the most part, this structure is for internal use.
  *
- * $Id: env.sig,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: env.sig,v 1.1.1.1 2004/01/04 17:53:19 chris Exp $
  *)
 signature ENV =
 sig

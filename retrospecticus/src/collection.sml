@@ -2,7 +2,7 @@
  * directory on a filesystem - it can hold photos as well as other
  * collections, allowing arbitrarily complex structures.
  *
- * $Id: collection.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: collection.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure Collection :> COLLECTION =
 struct

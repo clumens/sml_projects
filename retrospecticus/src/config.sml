@@ -1,7 +1,7 @@
 (* mod_ml configuration for the ML side of things.  For the most part,
  * this should be easy for anyone to modify.
  *
- * $Id: config.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: config.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure Config =
 struct

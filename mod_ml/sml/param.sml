@@ -2,7 +2,7 @@
  * cookies, this is managed with a table.  You need to create the
  * environment first with mk_param_env.
  *
- * $Id: param.sml,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: param.sml,v 1.1.1.1 2004/01/04 17:53:19 chris Exp $
  *)
 structure Param :> PARAM =
 struct

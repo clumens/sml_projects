@@ -3,7 +3,7 @@
  * mk_cookie_env before doing anything with cookies to construct this
  * environment table
  *
- * $Id: cookie.sml,v 1.1 2004/01/04 17:53:19 chris Exp $
+ * $Id: cookie.sml,v 1.1.1.1 2004/01/04 17:53:19 chris Exp $
  *)
 structure Cookie :> COOKIE =
 struct

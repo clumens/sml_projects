@@ -1,6 +1,6 @@
 (* This is the main page from the photo browser.
  *
- * $Id: index.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: index.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 let
    open Common

@@ -3,7 +3,7 @@
  * HTML system, but this will have to do for now) and higher-level
  * functions for generating entire sections of the site.
  *
- * $Id: common.sml,v 1.1 2004/01/04 17:53:20 chris Exp $
+ * $Id: common.sml,v 1.1.1.1 2004/01/04 17:53:20 chris Exp $
  *)
 structure Common =
 struct
