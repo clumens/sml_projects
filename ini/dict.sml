@@ -1,4 +1,4 @@
-(* $Id: dict.sml,v 1.1 2004/08/08 00:16:59 chris Exp $ *)
+(* $Id: dict.sml,v 1.2 2004/08/08 00:40:27 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -65,6 +65,6 @@ struct
    in
       HashTable.foldi (fn (k, v, str) => str ^ k ^ ":\n" ^
                                          (HashTable.foldi sect_str "" v))
-               "" dict
+                      "" dict
    end
 end
