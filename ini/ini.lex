@@ -1,4 +1,4 @@
-(* $Id: ini.lex,v 1.6 2004/08/08 00:15:57 chris Exp $ *)
+(* $Id: ini.lex,v 1.7 2004/08/11 23:11:31 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -35,7 +35,7 @@ type svalue = Tokens.svalue
 type ('a, 'b) token = ('a, 'b) Tokens.token
 type lexresult= (svalue, pos) token
 
-val lineno = ref 1
+val lineno = IniError.lineno
 
 fun eof () = Tokens.EOF(!lineno, !lineno)
 

@@ -1,4 +1,4 @@
-(* $Id: ini.sml,v 1.4 2004/08/08 23:02:36 chris Exp $ *)
+(* $Id: ini.sml,v 1.5 2004/08/11 23:11:31 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -49,13 +49,15 @@ struct
    (* Read in an ini file and return a dictionary of settings. *)
    fun parse filename =
    let
+      (* Reset the parser state for correct error reporting. *)
+      val _ = IniError.reset()
+
       (* Run the lexer on the input file, using the provided read function. *)
       fun lex get =
          LrParser.Stream.streamify (IniLex.makeLexer get)
 
       fun print_error (s, i:int, _) =
-         TextIO.output(TextIO.stdOut,
-                       "Error, line " ^ (Int.toString i) ^ ", " ^ s ^ "\n")
+         IniError.msg (s, i, filename)
 
       val file = TextIO.openIn filename
 
