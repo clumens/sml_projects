@@ -1,0 +1,6 @@
+library
+   structure IniLex
+is
+   ini.lex
+
+   $/basis.cm
