@@ -1,0 +1,67 @@
+About
+=====
+Ini is a structure for parsing and manipulating the popular Windows-style
+configuration file.  This file format has also popped up in such projects
+as PHP and Samba.  The Ini structure is written for Standard ML of New
+Jersey (SML/NJ).
+
+
+Licensing
+=========
+It is licensed under a BSD style license in order to promote the use of
+the code and SML in general.  See the top of any source file for the terms
+of the license.
+
+
+Usage
+=====
+There are two structures provided by this library - Ini, for reading and
+parsing INI files and IniDict, for manipulating the results of parsing.
+Ini exports one function:
+
+   val parse: string -> IniDict.section_dict
+
+Before you can do anything else, you'll need to call Ini.parse with a
+filename.  parse throws the Io exception if it is provided a bad filename
+or a file it cannot read, and the ParseError exception if the INI file is
+not valid.  You are given back a dictionary containing a mapping from
+section names to other dictionaries.  These other dictionaries are
+mappings from settings to values, where the values are lists.  See SPEC
+for further details.
+
+Now that you've got an IniDict.section_dict, you can use the IniDict
+structure to extract useful information from it.  You can use the
+HashTable functions to manipulate the dictionary, though this is
+cumbersome.  The IniDict structure provides specialized versions of the
+HashTable.find and HashTable.lookup functions:
+
+   val find: IniDict.section_dict -> string -> string -> string list option
+   val lookup: IniDict.section_dict -> string -> string -> string list
+
+find takes a dictionary, section name, and setting key name.  It returns
+the value if found and NONE if it does not exist in the dictionary.
+lookup takes the same arguments, but throws the NotFound exception if the
+key or section does not exist.  Note that the value is always a list,
+though it may be singleton if the key only appeared once in a section of
+the INI file.
+
+IniDict also provides the toString function:
+
+   val toString: IniDict.section_dict -> string
+
+This function converts a dictionary into a string suitable for printing.
+It does not produce a valid INI file, as it is more designed for debugging
+or display.
+
+
+Specification
+=============
+For a thorough documentation of the INI file specification recognized by
+this parser, see the SPEC file.  If you don't trust that and want to know
+exactly what's going on, look at ini.lex for the lexer and ini.grm for the
+parser.
+
+
+Bugs
+====
+Please send any bug reports or comments to chris@bangmoney.org.

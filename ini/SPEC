@@ -1,0 +1,108 @@
+Contents
+========
+1. Specification for INI files
+2. Syntax
+   2.1. Definitions
+   2.2. Grammar
+3. Semantics
+   3.1. Sections
+   3.2. Settings
+
+1. Specification for INI files
+==============================
+This file covers the syntatic and semantic specifications for INI files
+recognized by this parser.  Usage and installation of the library are
+covered elsewhere.  INI files are not complex enough to require a
+operational or denotational semantics, though I will touch on the
+semantics in a less formal manner.
+
+
+2. Syntax
+=========
+This section defines the syntax of the INI file; that is, what tokens may
+appear in the file, how to form valid tokens, and what grammar describes
+a valid INI file.  I'm not doing this too formally, as such a simple file
+format doesn't require too much theory.
+
+2.1. Definitions
+----------------
+Section - A section is a portion of the INI file beginning with a header
+          and containing a possibly empty list of settings.
+
+Header  - A header marks the beginning of a section.  It is made up of a
+          name enclosed in angle brackets and terminated with a newline.
+          Header names match the following regular expression:
+
+             [a-zA-Z][a-zA-Z0-9_]*
+
+Setting - Each section header is followed by an optionally empty list of
+          settings.  That is, a section may contain absolutely no useful
+          information.  Each setting takes the form of:
+
+             key=value
+
+          where key matches the regular expression:
+
+             [a-zA-Z][a-zA-Z0-9_]*
+
+          and the value consists of every character following the equals
+          and extending to the end of the line.  There are no provisions
+          for continuing a setting across multiple lines.
+
+Comment - A comment consists of a semicolon at the beginning of the line
+          and continues until the end of the line.  There is no block
+          comment and no way to put a comment at the end of a line
+          containing other characters.
+
+2.2. Grammar
+------------
+The parser recognizes all INI files matching the BNF shown below.  There
+are no conflicts in the grammar.
+
+ini-file    ::= section-lst
+
+section-lst ::= section-lst section
+              | section
+
+section     ::= header setting-lst
+              | header
+
+header      ::= "[" NAME "]"
+
+setting-lst ::= setting-lst setting
+              | setting
+
+setting     ::= NAME "=" NAME "\n"
+              | NAME "=" "\n"
+
+NAME        ::= [a-zA-Z][a-zA-Z0-9_]*
+
+
+3. Semantics
+============
+This section defines how the parser behaves as it operates on an INI file.
+Again, this is going to be more in words than in math.
+
+3.1. Sections
+-------------
+There is no set limit on the number of sections which may appear in an INI
+file besides the restrictions imposed by the parser's implementation.  A
+section header may appear more than once in the file, but the last
+definition will take precedence, obliterating all previous ones.  As the
+file is read, a dictionary is built up mapping section headers (strings)
+to subdictionaries.  Each subdictionary describes the settings for that
+section, as described below.
+
+Access to the dictionary for a single section is through the string
+representation of the section's header.
+
+3.2. Settings
+-------------
+A section is not required to have any settings in it.  As the settings
+list is read, a dictionary is built up mapping keys (strings) to values
+(strings).  This dictionary is then entered into the section dictionary.
+
+For each setting, a key is required though a value is not.  Keys may
+appear multiple times in the same section.  Each key maps to a list of
+values, so no value maps to the empty list, one value maps to the
+singleton list, and so on.

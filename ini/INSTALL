@@ -1,0 +1,27 @@
+Requirements
+============
+The Ini structure requires SML/NJ with CM, the SML/NJ library, ML-yacc,
+and ML-lex.  The first two should be built as part of any SML/NJ
+installation, while the last two might not be included.  If you do not
+have them, you will need to modify your installation to include these
+build tools.  I am not aware of any version-specific code being used in
+the structure that requires a particular version of SML/NJ to be
+installed.  If you want to be on the safe side, I have tested with version
+110.46.
+
+
+Installation
+============
+I'm not aware of any really good way to install add-on SML structures.
+You can add the ini directory to your project and then add a line like the
+following to the bottom of your project's .cm file:
+
+   path/to/ini/ini.cm
+
+This will cause CM to build the Ini structure as part of your project and
+autoload it.
+
+
+Bugs
+====
+Please send all bug reports or comments to chris@bangmoney.org.
