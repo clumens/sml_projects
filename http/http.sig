@@ -1,4 +1,4 @@
-(* $Id: http.sig,v 1.2 2004/07/27 13:25:54 chris Exp $ *)
+(* $Id: http.sig,v 1.3 2004/07/27 15:03:48 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -32,8 +32,5 @@ signature HTTP =
 sig
    exception StatusCode of int * string
 
-   type httpStatus = int * string
-   type url = {host: string, port: int, path: string}
-
-   val get: url -> string
+   val get: URI.URI -> string
 end

@@ -1,4 +1,4 @@
-(* $Id: http.sml,v 1.2 2004/07/27 13:25:54 chris Exp $ *)
+(* $Id: http.sml,v 1.3 2004/07/27 15:03:48 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -32,9 +32,6 @@ structure HTTP :> HTTP =
 struct
    exception StatusCode of int * string
 
-   type httpStatus = int * string
-   type url = {host: string, port: int, path: string}
-
    (* Convert a string into a vector slice. *)
    fun str_to_slice str =
       (Word8VectorSlice.full o Byte.stringToBytes) str
@@ -59,7 +56,7 @@ struct
          header (key, lst)
      | header (key, []) = ""
 
-   fun get {host, port, path} =
+   fun get (URI.http{user, password, host, port, path, query, frag}) =
    let
       (* Connect to the given host on the given port via TCP.  Throws SysErr
        * if we are unable to make a connection.  Returns the opened socket.
@@ -160,7 +157,8 @@ struct
                ( BinIO.output (stream, vec) ; do_it (stream, conn) )
          end
 
-         val filename = List.last (String.tokens (fn c => c = #"/") path)
+         val filename = List.last (String.tokens (fn c => c = #"/")
+                                                 (Option.getOpt (path, "/")))
          val (code, msg) = status hdrs
       in
          if code >= 400 then
@@ -178,12 +176,14 @@ struct
                                 " already exists") )
       end
 
-      val conn = connect host port
-      val req  = "GET " ^ path ^ " HTTP/1.1\r\n" ^
+      val conn = connect host (Option.getOpt (port, 80))
+      val req  = "GET " ^ (Option.getOpt (path, "/")) ^ " HTTP/1.1\r\n" ^
                  "Host: " ^ host ^ "\r\n" ^
                  "User-Agent: SML/NJ Getter\r\n" ^
                  "Connection: close\r\n\r\n"
    in
       send_request req conn ; recv_body (recv_headers ("", conn))
    end
+
+   | get (_) = raise URI.SchemeUnsupported
 end
