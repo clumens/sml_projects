@@ -4,14 +4,18 @@ The URI structure requires SML/NJ with CM and the regular expression
 library.  Both should be built as part of any SML/NJ installation.  I am
 not aware of any version-specific code being used in the structure that
 requires a particular version of SML/NJ to be installed.  If you want to
-be on the safe side, I have tested with version 110.46.
+be on the safe side, I have tested with versions 110.46 - 110.48.
 
 
 Installation
 ============
 I'm not aware of any really good way to install add-on SML structures.
-You can add the uri directory to your project and then add a line like the
-following to the bottom of your project's .cm file:
+You can add the URI directory to your project by adding the following line
+to the top section of your .cm file:
+
+   library (path/to/uri/uri.cm)
+
+And the following to the sources section:
 
    path/to/uri/uri.cm
 
