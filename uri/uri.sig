@@ -1,6 +1,6 @@
 (* Structure to manipulate and verify URIs, in accordance with RFC 2396.
  *
- * $Id: uri.sig,v 1.5 2004/07/27 13:24:13 chris Exp $
+ * $Id: uri.sig,v 1.6 2004/07/27 14:44:34 chris Exp $
  *)
 
 (* Copyright (c) 2004, Chris Lumens
@@ -33,6 +33,11 @@
  *)
 signature URI =
 sig
+   (* May be used by client structures to indicate the provided scheme
+    * isn't supported by this code.
+    *)
+   exception SchemeUnsupported
+
    datatype URI = ftp of {user: string option, password: string option,
                           host: string, port: int option, path: string option}
                 | http of {user: string option, password: string option,
