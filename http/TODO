@@ -1,4 +1,11 @@
 - use option types internally where it makes sense
 - write an example program that makes use of the structure
-- look through the wget man page and see what else we can take
-- runtime configuration parameters
+- support continuation of downloads
+- save headers to a file
+- progress bar via a lambda passed to get?
+- runtime configuration parameters:
+   - timeout length
+   - number of retries
+   - seconds to wait between retries
+   - specify user agent string
+   - define additional headers
