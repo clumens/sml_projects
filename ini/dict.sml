@@ -1,4 +1,4 @@
-(* $Id: ini.cm,v 1.4 2004/08/08 00:16:59 chris Exp $ *)
+(* $Id: dict.sml,v 1.1 2004/08/08 00:16:59 chris Exp $ *)
 
 (* Copyright (c) 2004, Chris Lumens
  * All rights reserved.
@@ -28,15 +28,43 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *)
-library
-   structure Ini
-   structure IniDict
-is
-   dict.sml
-   ini.lex
-   ini.grm
-   ini.sml
 
-   $/basis.cm
-   $/smlnj-lib.cm
-   $/ml-yacc-lib.cm
+structure IniDict =
+struct
+   (* Thrown by the hash table internals. *)
+   exception NotFound
+
+   (* A dictionary that, given a key, returns the value stored there. *)
+   type setting_dict = (string, string list) HashTable.hash_table
+
+   (* A dictionary that, given a string, returns the dictionary for that
+    * section.
+    *)
+   type section_dict = (string, setting_dict) HashTable.hash_table
+
+   (* Look up a key in the dictionary.  If it exists, append the value to
+    * the existing one.  If it does not exist, create a new mapping.
+    *)
+   fun append dict (key, value) =
+      case (HashTable.find dict key) of
+         SOME old_value => HashTable.insert dict (key, [value] @ old_value)
+       | NONE           => HashTable.insert dict (key, [value])
+
+   (* Create a blank dictionary. *)
+   fun mkDict () =
+      HashTable.mkTable (HashString.hashString, op =) (47, NotFound)
+
+   (* Convert an ini dictionary into a string suitable for printing. *)
+   fun toString dict =
+   let
+      val I = fn i => i
+
+      val sect_str = fn (k, v, str) => str ^ "\t" ^ k ^ " => " ^
+                                       (ListFormat.listToString I v) ^
+                                       "\n"
+   in
+      HashTable.foldi (fn (k, v, str) => str ^ k ^ ":\n" ^
+                                         (HashTable.foldi sect_str "" v))
+               "" dict
+   end
+end
