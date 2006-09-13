@@ -1,4 +1,4 @@
-(* $Id: md5.sml,v 1.3 2006/09/13 02:51:38 chris Exp $ *)
+(* $Id: md5.sml,v 1.4 2006/09/13 03:00:10 chris Exp $ *)
 
 (* Copyright (c) 2004, 2006 Chris Lumens
  * All rights reserved.
@@ -28,19 +28,19 @@ struct
       #[LW.andb (large, 0wxff),
         LW.>> (LW.andb (large, 0wxff00), 0w8),
         LW.>> (LW.andb (large, 0wxff0000), 0w16),
-	LW.>> (LW.andb (large, 0wxff000000), 0w24)]
+        LW.>> (LW.andb (large, 0wxff000000), 0w24)]
 
       
    fun print_digest digest = 
        let
-	   (* Print one word of the digest, padding as appropriate. *)
-	   val print_fn =
-	    fn v => ( Vector.app (fn e => print (StringCvt.padLeft #"0" 2
-							   (LW.toString e)))
-				 (unpack v) ;
-		      print " " )
+          (* Print one word of the digest, padding as appropriate. *)
+          val print_fn =
+             fn v => ( Vector.app (fn e => print (StringCvt.padLeft #"0" 2
+                                                  (LW.toString e)))
+                                  (unpack v) ;
+                       print " " )
        in
-	   (Vector.app print_fn digest ; print "\n") 
+          (Vector.app print_fn digest ; print "\n") 
        end
 
 
@@ -207,7 +207,7 @@ struct
       end
 
       (* Pack the 64 bytes in the input into 16 eight-byte quantities. *)
-      val words = Vector.map (fn w => Pack32Little.subVec (vec, w))
+      val words = Vector.map (fn w => PackWord32Little.subVec (vec, w))
                              #[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                                12, 13, 14, 15]
 
@@ -217,9 +217,9 @@ struct
 
       (* finally, add the calculated values back onto the originals *)
       val newdigest = #[ Vector.sub ( processed, 0 ) + Vector.sub(digest, 0 ) ,
-			 Vector.sub( processed, 1 ) + Vector.sub(digest , 1), 
-			 Vector.sub( processed, 2 ) + Vector.sub(digest , 2), 
-			 Vector.sub( processed, 3 ) + Vector.sub(digest , 3)]
+                         Vector.sub( processed, 1 ) + Vector.sub(digest , 1), 
+                         Vector.sub( processed, 2 ) + Vector.sub(digest , 2), 
+                         Vector.sub( processed, 3 ) + Vector.sub(digest , 3)]
    in
        {size=size, digest=newdigest}
    end
@@ -260,7 +260,7 @@ struct
 
                   val pre = LW.mod (LW.fromInt (W8V.length vec), 0w56)
 
-		  (* size must be calculated in bits, 8bits/byte *)
+                  (* size must be calculated in bits, 8bits/byte *)
                   val size_vec = mk_size ( size * 0w8)
                in
                   W8V.concat [vec, mk_pad (LW.toInt (0w56-pre)), size_vec]
