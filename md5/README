@@ -1,0 +1,26 @@
+About
+=====
+MD5 is a library for performing the MD5 message digest algorithm on files,
+written for Standard ML of New Jersey (SML/NJ).
+
+
+Licensing
+=========
+It is licensed under the GPL due to the code being essentially a transcription
+of the GNU md5sum program from coreutils into ML.  See the included COPYING
+file for the terms of this license.
+
+
+Usage
+=====
+See the included INSTALL file for how to install this library.  After you've
+installed it, the structure is very easy to use.  See the signature for the
+simple API.  The MD5.sum function takes in a filename and returns a string
+of the MD5 message digest.
+
+If the given file is not found, an Io exception will be raised.
+
+
+Bugs
+====
+Please send any bug reports or comments to chris@bangmoney.org.

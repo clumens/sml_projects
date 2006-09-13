@@ -1,0 +1,28 @@
+Requirements
+============
+The MD5 structure requires SML/NJ with CM and the regular expression
+library.  Both should be built as part of any SML/NJ installation.  I am
+not aware of any version-specific code being used in the structure that
+requires a particular version of SML/NJ to be installed.  If you want to
+be on the safe side, I have tested with version 110.59.
+
+
+Installation
+============
+I'm not aware of any really good way to install add-on SML structures.
+You can add the MD5 directory to your project by adding the following line
+to the top section of your .cm file:
+
+   library (path/to/md5/md5.cm)
+
+And the following to the sources section:
+
+   path/to/uri/md5.cm
+
+This will cause CM to build the MD5 structure as part of your project and
+autoload it.
+
+
+Bugs
+====
+Please send all bug reports or comments to chris@bangmoney.org.
