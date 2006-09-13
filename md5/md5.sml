@@ -1,4 +1,4 @@
-(* $Id: md5.sml,v 1.4 2006/09/13 03:00:10 chris Exp $ *)
+(* $Id: md5.sml,v 1.5 2006/09/13 03:20:15 chris Exp $ *)
 
 (* Copyright (c) 2004, 2006 Chris Lumens
  * All rights reserved.
@@ -31,22 +31,21 @@ struct
         LW.>> (LW.andb (large, 0wxff000000), 0w24)]
 
       
-   fun print_digest digest = 
-       let
-          (* Print one word of the digest, padding as appropriate. *)
-          val print_fn =
-             fn v => ( Vector.app (fn e => print (StringCvt.padLeft #"0" 2
-                                                  (LW.toString e)))
-                                  (unpack v) ;
-                       print " " )
-       in
-          (Vector.app print_fn digest ; print "\n") 
-       end
+   fun fmt_digest digest = let
+      (* Convert one word of the digest into a string, padding as
+       * appropriate.
+       *)
+      fun fmt word =
+          Vector.foldl (fn (e, str) => str ^ StringCvt.padLeft #"0" 2
+                                                               (LW.toString e))
+                       "" (unpack word)
+   in
+      Vector.foldl (fn (e, str) => str ^ e) "" (Vector.map fmt digest)
+   end
 
 
    (* digest is a vector of four LargeWords, and vec is a Word8Vector. *)
-   fun transform {size, digest} vec =
-   let
+   fun transform {size, digest} vec = let
       (* Core MD5 algorithms functions. *)
       val F1 = fn (x, y, z) => LW.xorb (z, LW.andb (x, LW.xorb(y, z)))
       val F2 = fn (x, y, z) => F1(z, x, y)
@@ -57,8 +56,7 @@ struct
        * functions to the rest of the arguments, returning the new value of
        * "w".
        *)
-      fun step f (w, x, y, z, input, s) =
-      let
+      fun step f (w, x, y, z, input, s) = let
          val w' = w + f(x, y, z) + input
       in
          LW.orb (LW.<< (w', s), LW.>> (w', 0w32 - s)) + x
@@ -70,8 +68,7 @@ struct
        * us to compose curried versions of all these roundX functions together
        * into one operation.
        *)
-      fun round1 input v =
-      let
+      fun round1 input v = let
          open Vector
 
          val f = (step F1)
@@ -104,8 +101,7 @@ struct
          #[a', b', c', d']
       end
 
-      fun round2 input v =
-      let
+      fun round2 input v = let
          open Vector
 
          val f = (step F2)
@@ -138,8 +134,7 @@ struct
          #[a', b', c', d']
       end
 
-      fun round3 input v =
-      let
+      fun round3 input v = let
          open Vector
 
          val f = (step F3)
@@ -172,8 +167,7 @@ struct
          #[a', b', c', d']
       end
 
-      fun round4 input v =
-      let
+      fun round4 input v = let
          open Vector
 
          val f = (step F4)
@@ -225,68 +219,62 @@ struct
    end
 
    (* Return the MD5 message digest of the provided file name. *)
-   fun sum filename =
-   let
+   fun sum filename = let
       (* Reads 64 bytes out of the opened stream and applies the function f
        * to that vector.
        *)
-      fun read (stream, {size, digest}, f) =
-            let
-               (* Given the message size and current vector, tack on the
-                * padding and return a complete 64 byte vector suitable
-                * for running the digest function on.
-                *)
-               fun final size vec =
-               let
-                  (* Padding consists of a 1, followed by enough 0s to
-                   * bring the message length to 56-byte alignment.
-                   *)
-                  fun mk_pad len =
-                     W8V.tabulate (len, (fn i => if i = 0 then 0w128 else 0w0))
+      fun read (stream, {size, digest}, f) = let
+         (* Given the message size and current vector, tack on the
+          * padding and return a complete 64 byte vector suitable
+          * for running the digest function on.
+          *)
+         fun final size vec = let
+            (* Padding consists of a 1, followed by enough 0s to
+             * bring the message length to 56-byte alignment.
+             *)
+            fun mk_pad len =
+               W8V.tabulate (len, (fn i => if i = 0 then 0w128 else 0w0))
 
-                  (* Append the length of the message, low order word
-                   * first.
-                   *)
-                  fun mk_size lw =
-                  let
-                     open Vector
-                  in
-                     W8V.fromList (foldr (fn (e, lst) =>
-                                            (W8.fromLargeWord e)::lst)
-                                         []
-                                         (concat [unpack lw,
-                                                  #[0w0, 0w0, 0w0, 0w0]]))
-                  end
-
-                  val pre = LW.mod (LW.fromInt (W8V.length vec), 0w56)
-
-                  (* size must be calculated in bits, 8bits/byte *)
-                  val size_vec = mk_size ( size * 0w8)
-               in
-                  W8V.concat [vec, mk_pad (LW.toInt (0w56-pre)), size_vec]
-               end
-
-               (* vec is a Word8Vector. *)
-               val vec = BinIO.inputN (stream, 64)
-               val len = LW.fromInt (W8V.length vec)
+            (* Append the length of the message, low order word
+             * first.
+             *)
+            fun mk_size lw = let
+               open Vector
             in
-               if len < 0w64 then
-                  let
-                     val size' = size+len
-                     val {digest=digest', ...} =
-                        f {size=size', digest=digest} (final size' vec)
-                  in
-                     print_digest digest' ; print "\n"
-                  end
-               else
-                  let
-                     (* Update the digest state, accounting for new bytes. *)
-                     val {size=size', digest=digest'} =
-                        f {size=(size+len), digest=digest} vec
-                  in
-                     read (stream, {size=size', digest=digest'}, f)
-                  end
+               W8V.fromList (foldr (fn (e, lst) => (W8.fromLargeWord e)::lst)
+                                   []
+                                   (concat [unpack lw, #[0w0, 0w0, 0w0, 0w0]]))
             end
+
+            val pre = LW.mod (LW.fromInt (W8V.length vec), 0w56)
+
+            (* size must be calculated in bits, 8bits/byte *)
+            val size_vec = mk_size ( size * 0w8)
+         in
+            W8V.concat [vec, mk_pad (LW.toInt (0w56-pre)), size_vec]
+         end
+
+         (* vec is a Word8Vector. *)
+         val vec = BinIO.inputN (stream, 64)
+         val len = LW.fromInt (W8V.length vec)
+      in
+         if len < 0w64 then
+            let
+               val size' = size+len
+               val {digest=digest', ...} =
+                  f {size=size', digest=digest} (final size' vec)
+            in
+               fmt_digest digest'
+            end
+         else
+            let
+               (* Update the digest state, accounting for new bytes. *)
+               val {size=size', digest=digest'} =
+                  f {size=(size+len), digest=digest} vec
+            in
+               read (stream, {size=size', digest=digest'}, f)
+            end
+      end
 
       val file = BinIO.openIn filename
       val state = init()
