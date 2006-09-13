@@ -1,9 +1,9 @@
 (* Structure to calculate MD5 sums for files.
  *
- * $Id: md5.sig,v 1.1 2004/09/30 02:26:07 chris Exp $
+ * $Id: md5.sig,v 1.2 2006/09/13 02:48:28 chris Exp $
  *)
 
-(* Copyright (c) 2004, Chris Lumens
+(* Copyright (c) 2004, 2006 Chris Lumens
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
